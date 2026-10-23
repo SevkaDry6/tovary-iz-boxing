@@ -62,7 +62,7 @@ footer{background:#11131a;color:#fff;padding:28px 0}.foot{display:flex;justify-c
  </div>
 </section>
 <main class="wrap" id="catalog">
- <div class="section-head"><div><h2>Популярные товары</h2><div class="sub">Демо-каталог — замени примеры своими товарами и ценами</div></div></div>
+ <div class="section-head"><div><h2>Популярные товары</h2><div class="sub" id="catalogStatus">Загружаем товары…</div></div></div>
  <div class="searchrow"><input id="search" type="search" placeholder="Найти товар..." aria-label="Найти товар"><select id="sort" aria-label="Сортировка"><option value="default">Сначала популярные</option><option value="low">Сначала дешевле</option><option value="high">Сначала дороже</option></select></div>
  <div class="categories" id="categories"></div>
  <div class="grid" id="products"></div>
@@ -71,22 +71,32 @@ footer{background:#11131a;color:#fff;padding:28px 0}.foot{display:flex;justify-c
 </main>
 <footer><div class="wrap foot"><div><b>Товары из Boxing</b><br><small>Магазин вещей и товаров на каждый день</small></div><small>© <span id="year"></span> Товары из Boxing</small></div></footer>
 <script>
-const productsData=[
- {id:1,name:"Повседневная футболка",cat:"Одежда",price:899,emoji:"👕",desc:"Базовая вещь на каждый день"},
- {id:2,name:"Кроссовки на каждый день",cat:"Обувь",price:2490,emoji:"👟",desc:"Удобный повседневный стиль"},
- {id:3,name:"Городской рюкзак",cat:"Сумки и аксессуары",price:1590,emoji:"🎒",desc:"Для прогулок и поездок"},
- {id:4,name:"Наручные часы",cat:"Часы и украшения",price:1890,emoji:"⌚",desc:"Лаконичный аксессуар"},
- {id:5,name:"Очки в стильной оправе",cat:"Сумки и аксессуары",price:690,emoji:"🕶️",desc:"Завершают образ"},
- {id:6,name:"Свеча для дома",cat:"Товары для дома",price:450,emoji:"🕯️",desc:"Уютная деталь интерьера"},
- {id:7,name:"Кепка",cat:"Одежда",price:590,emoji:"🧢",desc:"Аксессуар для повседневного образа"},
- {id:8,name:"Набор украшений",cat:"Часы и украшения",price:790,emoji:"💍",desc:"Небольшой подарок себе или близким"}
+// Публичные настройки Supabase. Публичный ключ можно использовать в браузере,
+// но доступ на изменение товаров должен быть закрыт политиками RLS.
+const SUPABASE_URL = "https://vltyoaukpghgknwszzwf.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_031wgOOIxZOZkwwnY9jlyg_SZZlRMDr";
+const demoProducts = [
+ {id:1,name:"Повседневная футболка",category:"Одежда",price:899,description:"Базовая вещь на каждый день"},
+ {id:2,name:"Кроссовки на каждый день",category:"Обувь",price:2490,description:"Удобный повседневный стиль"},
+ {id:3,name:"Городской рюкзак",category:"Сумки и аксессуары",price:1590,description:"Для прогулок и поездок"},
+ {id:4,name:"Наручные часы",category:"Часы и украшения",price:1890,description:"Лаконичный аксессуар"},
+ {id:5,name:"Очки в стильной оправе",category:"Сумки и аксессуары",price:690,description:"Завершают образ"},
+ {id:6,name:"Свеча для дома",category:"Товары для дома",price:450,description:"Уютная деталь интерьера"},
+ {id:7,name:"Кепка",category:"Одежда",price:590,description:"Аксессуар на каждый день"},
+ {id:8,name:"Набор украшений",category:"Часы и украшения",price:790,description:"Подарок себе или близким"}
 ];
-const cats=["Все товары",...new Set(productsData.map(p=>p.cat))];let active="Все товары",cart=0;
+const emojiFor = cat => ({"Одежда":"👕","Обувь":"👟","Сумки и аксессуары":"🎒","Часы и украшения":"⌚","Товары для дома":"🏠","Для дома":"🏠","Разное":"✨"}[cat] || "🛍️");
+let productsData = demoProducts.map(p=>({...p,cat:p.category,emoji:emojiFor(p.category),desc:p.description}));
+let active="Все товары",cart=0;
 const products=document.getElementById("products"),categories=document.getElementById("categories"),search=document.getElementById("search"),sort=document.getElementById("sort");
+let cats=[];
 function renderCats(){categories.innerHTML="";cats.forEach(c=>{let b=document.createElement("button");b.className="chip"+(active===c?" active":"");b.textContent=c;b.onclick=()=>{active=c;renderCats();render()};categories.appendChild(b)})}
-function render(){let list=productsData.filter(p=>(active==="Все товары"||p.cat===active)&&(p.name+" "+p.cat+" "+p.desc).toLowerCase().includes(search.value.toLowerCase()));if(sort.value==="low")list.sort((a,b)=>a.price-b.price);if(sort.value==="high")list.sort((a,b)=>b.price-a.price);products.innerHTML="";if(!list.length){products.innerHTML='<div class="empty">Ничего не найдено. Попробуй другой запрос.</div>';return}
-list.forEach(p=>{let el=document.createElement("article");el.className="product";el.innerHTML=`<div class="product-img">${p.emoji}</div><div class="product-body"><div class="tag">${p.cat}</div><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="price-row"><div class="price">${p.price.toLocaleString("ru-RU")} ₽</div><button class="add" data-id="${p.id}">+ В корзину</button></div></div>`;el.querySelector("button").onclick=()=>{cart++;document.getElementById("cartCount").textContent=cart;document.getElementById("cartStatus").textContent="Добавлено в корзину. Для оформления заказа свяжитесь с продавцом.";};products.appendChild(el)})}
-search.addEventListener("input",render);sort.addEventListener("change",render);document.getElementById("year").textContent=new Date().getFullYear();renderCats();render();
+function render(){let list=productsData.filter(p=>(active==="Все товары"||p.cat===active)&&((p.name+" "+p.cat+" "+p.desc).toLowerCase().includes(search.value.toLowerCase())));if(sort.value==="low")list.sort((a,b)=>a.price-b.price);if(sort.value==="high")list.sort((a,b)=>b.price-a.price);products.innerHTML="";if(!list.length){products.innerHTML='<div class="empty">Товаров пока нет. Попробуй позже.</div>';return}
+list.forEach(p=>{let el=document.createElement("article");el.className="product";let visual=p.image_url?`<img src="${escapeAttr(p.image_url)}" alt="${escapeAttr(p.name)}" style="width:100%;height:100%;object-fit:cover">`:escapeHtml(p.emoji||emojiFor(p.cat));el.innerHTML=`<div class="product-img">${visual}</div><div class="product-body"><div class="tag">${escapeHtml(p.cat)}</div><h3>${escapeHtml(p.name)}</h3><div class="desc">${escapeHtml(p.desc||"")}</div><div class="price-row"><div class="price">${Number(p.price||0).toLocaleString("ru-RU")} ₽</div><button class="add" data-id="${Number(p.id)||0}">+ В корзину</button></div></div>`;el.querySelector("button").onclick=()=>{cart++;document.getElementById("cartCount").textContent=cart;document.getElementById("cartStatus").textContent="Добавлено в корзину. Для оформления заказа свяжитесь с продавцом.";};products.appendChild(el)})}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function escapeAttr(v){return escapeHtml(v)}
+async function loadProducts(){const status=document.getElementById("catalogStatus");try{const res=await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${SUPABASE_PUBLISHABLE_KEY}`}});if(!res.ok)throw new Error(`HTTP ${res.status}`);const rows=await res.json();if(!Array.isArray(rows))throw new Error("Неверный формат данных");productsData=rows.map(p=>({id:p.id,name:p.name||"Без названия",cat:p.category||p.cat||"Разное",price:Number(p.price)||0,desc:p.description||p.desc||"",emoji:p.emoji||emojiFor(p.category||p.cat),image_url:p.image_url||p.image||""}));cats=["Все товары",...new Set(productsData.map(p=>p.cat))];status.textContent=productsData.length?`Товаров в каталоге: ${productsData.length}`:"База подключена, но товаров пока нет.";}catch(e){cats=["Все товары",...new Set(productsData.map(p=>p.cat))];status.textContent="Не удалось загрузить товары из базы — показываем примеры. Проверь таблицу и права доступа.";console.error("Supabase catalog error",e)}renderCats();render()}
+search.addEventListener("input",render);sort.addEventListener("change",render);document.getElementById("year").textContent=new Date().getFullYear();loadProducts();
 </script>
 </body>
-</html>
+  </html>
