@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Товары из Boxing — одежда, обувь, аксессуары и товары для дома.">
+<title>Товары из Boxing — интернет-магазин</title>
+<style>
+:root{--bg:#f5f6f8;--ink:#17191f;--muted:#686d78;--card:#fff;--accent:#6c4df6;--line:#e7e8ee}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:0 20px}
+header{background:#11131a;color:#fff}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 0}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.5px}.logo span{color:#a995ff}
+nav{display:flex;gap:18px;font-size:14px;color:#d9d9e1}.cart{border:1px solid #444653;border-radius:999px;padding:10px 14px;white-space:nowrap}
+.hero{padding:56px 0 48px;background:radial-gradient(circle at 80% 20%,#44327e 0,transparent 36%),linear-gradient(125deg,#171923,#252139);color:white}
+.hero-inner{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center}
+.kicker{color:#c4b8ff;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(36px,6vw,62px);line-height:1.02;letter-spacing:-2px;margin:14px 0}
+.hero p{color:#d4d3df;line-height:1.65;max-width:570px}
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;padding:13px 18px;border:0;border-radius:12px;font-weight:700;cursor:pointer}
+.hero-art{min-height:230px;border:1px solid #514778;border-radius:28px;background:linear-gradient(135deg,#383052,#191b26);display:flex;align-items:center;justify-content:center;font-size:94px;box-shadow:0 25px 65px #090a1270}
+main{padding:34px 0 64px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:12px 0 22px}
+h2{font-size:28px;letter-spacing:-.7px;margin:0 0 6px}.sub{color:var(--muted);font-size:14px}
+.searchrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+input,select{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:14px}
+input{flex:1;min-width:190px}
+.categories{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.chip{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 14px;cursor:pointer;font-size:13px}
+.chip.active{background:#211b3b;color:white;border-color:#211b3b}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.product{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.product:hover{transform:translateY(-3px);box-shadow:0 14px 30px #2222}
+.product-img{height:170px;display:flex;align-items:center;justify-content:center;font-size:66px;background:linear-gradient(135deg,#eeeafc,#f8f7fb)}
+.product-body{padding:15px}.tag{font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.product h3{font-size:16px;margin:8px 0}.desc{font-size:13px;color:var(--muted);min-height:34px;line-height:1.4}
+.price-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:14px}.price{font-weight:900;font-size:18px}
+.add{background:#f0edff;color:#4932c6;border:0;border-radius:10px;padding:9px 11px;font-weight:800;cursor:pointer}
+.notice{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:28px;display:flex;gap:12px;align-items:flex-start}
+.notice strong{display:block;margin-bottom:5px}.notice p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+footer{background:#11131a;color:#fff;padding:28px 0}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.foot small{color:#aaaeb9}
+.empty{padding:35px;text-align:center;color:var(--muted);grid-column:1/-1}
+#cartStatus{font-size:13px;color:#d7d0ff;margin-top:10px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-inner{grid-template-columns:1fr}.hero-art{min-height:160px;font-size:72px}nav{display:none}}
+@media(max-width:480px){.wrap{padding:0 14px}.grid{gap:10px}.product-img{height:130px;font-size:52px}.product-body{padding:11px}.product h3{font-size:14px}.price-row{align-items:flex-start;flex-direction:column}.add{width:100%}.hero{padding:38px 0}}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap top">
+  <a class="logo" href="#"><span>Товары</span> из Boxing</a>
+  <nav><a href="#catalog">Каталог</a><a href="#about">О магазине</a><a href="#contacts">Контакты</a></nav>
+  <a class="cart" href="#contacts">🛍 Корзина: <b id="cartCount">0</b></a>
+ </div>
+</header>
+<section class="hero">
+ <div class="wrap hero-inner">
+  <div><div class="kicker">Находки для каждого дня</div><h1>Твой стиль.<br>Твои товары.</h1>
+   <p>Одежда, обувь, сумки, аксессуары, украшения и полезные вещи для дома — выбирай то, что нравится.</p>
+   <a class="btn" href="#catalog">Смотреть каталог&nbsp; ↓</a><div id="cartStatus" aria-live="polite"></div>
+  </div>
+  <div class="hero-art" aria-label="Покупки">🛍️ 👟 ✨</div>
+ </div>
+</section>
+<main class="wrap" id="catalog">
+ <div class="section-head"><div><h2>Популярные товары</h2><div class="sub">Демо-каталог — замени примеры своими товарами и ценами</div></div></div>
+ <div class="searchrow"><input id="search" type="search" placeholder="Найти товар..." aria-label="Найти товар"><select id="sort" aria-label="Сортировка"><option value="default">Сначала популярные</option><option value="low">Сначала дешевле</option><option value="high">Сначала дороже</option></select></div>
+ <div class="categories" id="categories"></div>
+ <div class="grid" id="products"></div>
+ <section class="notice" id="about"><div style="font-size:25px">📦</div><div><strong>Как заказать</strong><p>Добавь понравившиеся товары в корзину и свяжись с продавцом, чтобы уточнить наличие, доставку и оплату. Перед запуском укажи свои контакты и замени демонстрационные карточки реальными товарами.</p></div></section>
+ <section class="notice" id="contacts"><div style="font-size:25px">💬</div><div><strong>Связаться с магазином</strong><p>Контакты продавца пока не добавлены. В файле сайта найди раздел контактов и вставь свою ссылку на мессенджер, телефон или электронную почту.</p></div></section>
+</main>
+<footer><div class="wrap foot"><div><b>Товары из Boxing</b><br><small>Магазин вещей и товаров на каждый день</small></div><small>© <span id="year"></span> Товары из Boxing</small></div></footer>
+<script>
+const productsData=[
+ {id:1,name:"Повседневная футболка",cat:"Одежда",price:899,emoji:"👕",desc:"Базовая вещь на каждый день"},
+ {id:2,name:"Кроссовки на каждый день",cat:"Обувь",price:2490,emoji:"👟",desc:"Удобный повседневный стиль"},
+ {id:3,name:"Городской рюкзак",cat:"Сумки и аксессуары",price:1590,emoji:"🎒",desc:"Для прогулок и поездок"},
+ {id:4,name:"Наручные часы",cat:"Часы и украшения",price:1890,emoji:"⌚",desc:"Лаконичный аксессуар"},
+ {id:5,name:"Очки в стильной оправе",cat:"Сумки и аксессуары",price:690,emoji:"🕶️",desc:"Завершают образ"},
+ {id:6,name:"Свеча для дома",cat:"Товары для дома",price:450,emoji:"🕯️",desc:"Уютная деталь интерьера"},
+ {id:7,name:"Кепка",cat:"Одежда",price:590,emoji:"🧢",desc:"Аксессуар для повседневного образа"},
+ {id:8,name:"Набор украшений",cat:"Часы и украшения",price:790,emoji:"💍",desc:"Небольшой подарок себе или близким"}
+];
+const cats=["Все товары",...new Set(productsData.map(p=>p.cat))];let active="Все товары",cart=0;
+const products=document.getElementById("products"),categories=document.getElementById("categories"),search=document.getElementById("search"),sort=document.getElementById("sort");
+function renderCats(){categories.innerHTML="";cats.forEach(c=>{let b=document.createElement("button");b.className="chip"+(active===c?" active":"");b.textContent=c;b.onclick=()=>{active=c;renderCats();render()};categories.appendChild(b)})}
+function render(){let list=productsData.filter(p=>(active==="Все товары"||p.cat===active)&&(p.name+" "+p.cat+" "+p.desc).toLowerCase().includes(search.value.toLowerCase()));if(sort.value==="low")list.sort((a,b)=>a.price-b.price);if(sort.value==="high")list.sort((a,b)=>b.price-a.price);products.innerHTML="";if(!list.length){products.innerHTML='<div class="empty">Ничего не найдено. Попробуй другой запрос.</div>';return}
+list.forEach(p=>{let el=document.createElement("article");el.className="product";el.innerHTML=`<div class="product-img">${p.emoji}</div><div class="product-body"><div class="tag">${p.cat}</div><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="price-row"><div class="price">${p.price.toLocaleString("ru-RU")} ₽</div><button class="add" data-id="${p.id}">+ В корзину</button></div></div>`;el.querySelector("button").onclick=()=>{cart++;document.getElementById("cartCount").textContent=cart;document.getElementById("cartStatus").textContent="Добавлено в корзину. Для оформления заказа свяжитесь с продавцом.";};products.appendChild(el)})}
+search.addEventListener("input",render);sort.addEventListener("change",render);document.getElementById("year").textContent=new Date().getFullYear();renderCats();render();
+</script>
+</body>
+</html>
