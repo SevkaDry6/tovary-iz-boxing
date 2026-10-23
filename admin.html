@@ -1,610 +1,414 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Панель продавца — Товары из Boxing</title>
-<style>
-:root{--bg:#f5f6fa;--ink:#171923;--muted:#686d78;--accent:#6c4df6;--line:#e5e7ef}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px Arial,sans-serif}
-main{max-width:900px;margin:28px auto;padding:0 16px}
-.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px}
-h1{margin:0 0 8px;font-size:25px}
-h2{font-size:20px;margin:0 0 14px}
-.muted{color:var(--muted);font-size:14px;line-height:1.5}
-label{display:block;font-size:14px;font-weight:bold;margin:12px 0 6px}
-input,textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:white}
-input[type=file]{background:#fafaff}
-textarea{min-height:75px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
-button{border:0;border-radius:10px;padding:12px 16px;background:var(--accent);color:white;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.55;cursor:wait}
-button.secondary{background:#eeeaff;color:#4331a8}
-button.danger{background:#b42318}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.status{margin-top:12px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
-.item{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center;margin:8px 0;background:white}
-.item img,.thumb{width:58px;height:58px;object-fit:cover;border-radius:8px;flex-shrink:0}
-.thumb{display:grid;place-items:center;background:#eeeaff;font-size:28px}
-.info{flex:1;min-width:0}
-.info strong{display:block;overflow-wrap:anywhere}
-.info small{color:var(--muted)}
-.hidden{display:none!important}
-.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.preview{display:block;max-width:220px;max-height:220px;object-fit:contain;margin-top:12px;border-radius:12px}
-@media(max-width:600px){.grid{grid-template-columns:1fr}.panel{padding:16px}.item{align-items:flex-start;flex-wrap:wrap}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Админка — Товары из Boxing</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 16px; background: #101114; color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+    main { max-width: 760px; margin: auto; }
+    h1 { font-size: 25px; }
+    input, textarea, button {
+      width: 100%; padding: 12px; margin: 6px 0;
+      border-radius: 9px; font-size: 16px;
+    }
+    input, textarea {
+      color: #fff; background: #1c1e23; border: 1px solid #41434a;
+    }
+    button {
+      border: 0; background: #f4c542; color: #111;
+      font-weight: bold; cursor: pointer;
+    }
+    button:disabled { opacity: .5; }
+    .secondary { background: #353840; color: white; }
+    .danger { background: #c93636; color: white; }
+    .panel, .product {
+      background: #1b1d22; border: 1px solid #34363d;
+      padding: 14px; margin: 14px 0; border-radius: 12px;
+    }
+    .product img { width: 100%; max-height: 230px; object-fit: contain; }
+    .muted { color: #b8bac2; font-size: 14px; }
+    #message { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
 <main>
+  <h1>🛍️ Управление товарами</h1>
+  <p class="muted">Товары из Boxing</p>
 
-<section class="panel">
-<div class="topline">
-<h1>🛍️ Панель продавца</h1>
-<a href="./index.html">Открыть магазин ↗</a>
-</div>
-<p class="muted">Добавляй, изменяй и удаляй товары. Фотографии можно выбирать прямо из галереи телефона.</p>
-</section>
+  <section id="loginPanel" class="panel">
+    <h2>Вход администратора</h2>
+    <input id="email" type="email" placeholder="Электронная почта"
+      autocomplete="username">
+    <input id="password" type="password" placeholder="Пароль"
+      autocomplete="current-password">
+    <button id="loginBtn" type="button">Войти</button>
+  </section>
 
-<section class="panel" id="authPanel">
-<h2>Вход продавца</h2>
-<p class="muted">Войди под своим пользователем Supabase.</p>
-<form id="loginForm">
-<label for="email">Электронная почта</label>
-<input id="email" type="email" autocomplete="username" required placeholder="Почта продавца">
-<label for="password">Пароль</label>
-<input id="password" type="password" autocomplete="current-password" required placeholder="Пароль">
-<div class="actions">
-<button id="loginBtn" type="submit">Войти</button>
-<button class="secondary" id="logoutBtn" type="button" disabled>Выйти</button>
-</div>
-</form>
-<div class="status" id="authStatus" role="status"></div>
-</section>
+  <section id="adminPanel" class="hidden">
+    <div class="panel">
+      <button id="logoutBtn" class="secondary" type="button">Выйти</button>
+      <h2 id="formTitle">Добавить товар</h2>
 
-<section class="panel hidden" id="editorPanel">
-<h2 id="formTitle">Добавить товар</h2>
-<form id="productForm">
-<input type="hidden" id="productId">
+      <form id="productForm">
+        <input id="productName" required maxlength="200"
+          placeholder="Название товара">
+        <input id="productPrice" type="number" required min="0"
+          step="0.01" placeholder="Цена">
+        <input id="productCategory" required maxlength="100"
+          placeholder="Категория">
+        <textarea id="productDescription" rows="3"
+          placeholder="Описание товара"></textarea>
 
-<label for="name">Название товара *</label>
-<input id="name" required maxlength="120" placeholder="Например, футболка">
+        <label for="productImage">Фотография из галереи</label>
+        <input id="productImage" type="file" accept="image/*">
+        <img id="preview" class="hidden" alt="Предпросмотр"
+          style="width:100%;max-height:240px;object-fit:contain">
 
-<div class="grid">
-<div>
-<label for="price">Цена в рублях *</label>
-<input id="price" required type="number" min="0" step="1" placeholder="990">
-</div>
-<div>
-<label for="category">Категория *</label>
-<select id="category">
-<option>Одежда</option>
-<option>Обувь</option>
-<option>Сумки и аксессуары</option>
-<option>Часы и украшения</option>
-<option>Товары для дома</option>
-<option>Разное</option>
-</select>
-</div>
-</div>
+        <button id="saveBtn" type="submit">Добавить товар</button>
+        <button id="cancelBtn" class="secondary hidden"
+          type="button">Отмена редактирования</button>
+      </form>
+    </div>
 
-<label for="description">Описание</label>
-<textarea id="description" maxlength="1000" placeholder="Коротко о товаре"></textarea>
+    <h2>Товары в магазине</h2>
+    <button id="refreshBtn" class="secondary" type="button">
+      Обновить список
+    </button>
+    <div id="products"></div>
+  </section>
 
-<label for="imageFile">Фотография товара</label>
-<input id="imageFile" type="file" accept="image/*">
-<p class="muted">Выбери фото из галереи. Максимальный размер — 8 МБ. Если редактируешь товар и не выбираешь новое фото, старое сохранится.</p>
-<img id="imagePreview" class="preview hidden" alt="Предпросмотр фотографии">
-
-<div class="actions">
-<button type="submit" id="saveBtn">Сохранить товар</button>
-<button type="button" class="secondary hidden" id="cancelBtn">Отмена</button>
-</div>
-</form>
-<div class="status" id="saveStatus" role="status"></div>
-</section>
-
-<section class="panel hidden" id="listPanel">
-<div class="topline">
-<h2>Товары в базе</h2>
-<button class="secondary" id="refreshBtn" type="button">Обновить список</button>
-</div>
-<div id="productList"></div>
-<div class="status" id="listStatus" role="status"></div>
-</section>
-
-<section class="panel">
-<h2>Важно</h2>
-<p class="muted">Для загрузки фотографий создано хранилище product-images в Supabase. Вход продавца обязателен. Не добавляй секретный service_role-ключ в этот файл.</p>
-</section>
-
+  <p id="message" role="status" aria-live="polite"></p>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-"use strict";
+(() => {
+  const SUPABASE_URL = "https://vltyoaukpghgknwszzwf.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_031wgOOIxZOZkwwnY9Jlyg_SZZlRMDr";
+  const TABLE = "products";
+  const BUCKET = "product-images";
 
-const SUPABASE_URL="https://vltyoaukpghgknwszzwf.supabase.co";
-const SUPABASE_KEY="sb_publishable_031wgOOIxZOZkwwnY9jlyg_SZZlRMDr";
-const BUCKET="product-images";
-
-let token="";
-let busy=false;
-let previewObjectUrl=null;
-
-const $=id=>document.getElementById(id);
-const say=(id,text)=>$(id).textContent=text;
-
-function headers(extra={}){
-  return {
-    apikey:SUPABASE_KEY,
-    Authorization:"Bearer "+token,
-    ...extra
-  };
-}
-
-async function responseData(response){
-  const text=await response.text();
-  let data={};
-  try{data=text?JSON.parse(text):{};}
-  catch{data={message:text};}
-
-  if(!response.ok){
-    throw new Error(
-      data.message||
-      data.msg||
-      data.error_description||
-      data.error||
-      "Ошибка сервера "+response.status
-    );
-  }
-  return data;
-}
-
-function showLoggedIn(loggedIn){
-  $("authPanel").classList.toggle("hidden",loggedIn);
-  $("editorPanel").classList.toggle("hidden",!loggedIn);
-  $("listPanel").classList.toggle("hidden",!loggedIn);
-  $("logoutBtn").disabled=!loggedIn;
-  $("loginBtn").disabled=loggedIn;
-}
-
-function validImageUrl(url){
-  if(!url)return false;
-  try{
-    const u=new URL(url);
-    return u.protocol==="https:"||u.protocol==="http:";
-  }catch{return false;}
-}
-
-/* ВХОД */
-$("loginForm").addEventListener("submit",async event=>{
-  event.preventDefault();
-  if(busy)return;
-
-  busy=true;
-  $("loginBtn").disabled=true;
-  say("authStatus","Входим…");
-
-  try{
-    const response=await fetch(
-      SUPABASE_URL+"/auth/v1/token?grant_type=password",
-      {
-        method:"POST",
-        headers:{
-          apikey:SUPABASE_KEY,
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          email:$("email").value.trim(),
-          password:$("password").value
-        })
-      }
-    );
-
-    const data=await responseData(response);
-    if(!data.access_token)throw new Error("Не получен токен входа.");
-
-    token=data.access_token;
-    showLoggedIn(true);
-    say("authStatus","Вход выполнен.");
-    await loadProducts();
-
-  }catch(error){
-    token="";
-    showLoggedIn(false);
-    say("authStatus","Ошибка входа: "+error.message);
-  }finally{
-    busy=false;
-    $("loginBtn").disabled=false;
-  }
-});
-
-/* ВЫХОД */
-$("logoutBtn").addEventListener("click",async()=>{
-  if(token){
-    try{
-      await fetch(SUPABASE_URL+"/auth/v1/logout",{
-        method:"POST",
-        headers:headers()
-      });
-    }catch{}
-  }
-  token="";
-  showLoggedIn(false);
-  $("productList").replaceChildren();
-  resetForm();
-  say("authStatus","Вы вышли из аккаунта.");
-});
-
-/* ПРЕДПРОСМОТР ФОТО */
-function clearPreviewObjectUrl(){
-  if(previewObjectUrl){
-    URL.revokeObjectURL(previewObjectUrl);
-    previewObjectUrl=null;
-  }
-}
-
-function showPreview(file){
-  const preview=$("imagePreview");
-  clearPreviewObjectUrl();
-
-  if(!file){
-    preview.classList.add("hidden");
-    preview.removeAttribute("src");
-    return;
-  }
-
-  if(!file.type.startsWith("image/")){
-    preview.classList.add("hidden");
-    preview.removeAttribute("src");
-    say("saveStatus","Выбери файл изображения.");
-    return;
-  }
-
-  previewObjectUrl=URL.createObjectURL(file);
-  preview.src=previewObjectUrl;
-  preview.classList.remove("hidden");
-  say("saveStatus","");
-}
-
-$("imageFile").addEventListener("change",()=>{
-  const file=$("imageFile").files[0];
-
-  if(file&&file.size>8*1024*1024){
-    $("imageFile").value="";
-    showPreview(null);
-    say("saveStatus","Фотография слишком большая. Максимум 8 МБ.");
-    return;
-  }
-  showPreview(file);
-});
-
-/* ЗАГРУЗКА ФАЙЛА В SUPABASE STORAGE */
-async function uploadImage(file){
-  if(!file)return null;
-
-  if(!file.type.startsWith("image/")){
-    throw new Error("Выбранный файл не является изображением.");
-  }
-
-  if(file.size>8*1024*1024){
-    throw new Error("Фото должно быть не больше 8 МБ.");
-  }
-
-  const extensions={
-    "image/jpeg":"jpg",
-    "image/png":"png",
-    "image/webp":"webp",
-    "image/gif":"gif",
-    "image/avif":"avif"
-  };
-  const extension=extensions[file.type];
-
-  if(!extension){
-    throw new Error("Формат не поддерживается. Используй JPG, PNG, WebP, GIF или AVIF.");
-  }
-
-  const path=crypto.randomUUID()+"."+extension;
-  const response=await fetch(
-    SUPABASE_URL+"/storage/v1/object/"+BUCKET+"/"+path,
-    {
-      method:"POST",
-      headers:headers({
-        "Content-Type":file.type,
-        "x-upsert":"false"
-      }),
-      body:file
-    }
+  const $ = id => document.getElementById(id);
+  const client = window.supabase.createClient(
+    SUPABASE_URL, SUPABASE_KEY
   );
 
-  await responseData(response);
+  let editingId = null;
+  let currentImageUrl = null;
+  let products = [];
 
-  return SUPABASE_URL+
-    "/storage/v1/object/public/"+BUCKET+"/"+path;
-}
-
-/* ФОРМА */
-function resetForm(){
-  $("productForm").reset();
-  $("productId").value="";
-  $("formTitle").textContent="Добавить товар";
-  $("saveBtn").textContent="Сохранить товар";
-  $("cancelBtn").classList.add("hidden");
-  clearPreviewObjectUrl();
-  $("imagePreview").classList.add("hidden");
-  $("imagePreview").removeAttribute("src");
-}
-
-$("cancelBtn").addEventListener("click",()=>{
-  resetForm();
-  say("saveStatus","Редактирование отменено.");
-});
-
-/* СОХРАНЕНИЕ НОВОГО ТОВАРА И ИЗМЕНЕНИЙ */
-$("productForm").addEventListener("submit",async event=>{
-  event.preventDefault();
-  if(busy)return;
-
-  const id=$("productId").value.trim();
-  const name=$("name").value.trim();
-  const price=Number($("price").value);
-  const category=$("category").value;
-  const description=$("description").value.trim();
-  const selectedFile=$("imageFile").files[0]||null;
-
-  if(!name){
-    say("saveStatus","Введи название товара.");
-    return;
+  function message(text, error = false) {
+    $("message").textContent = text;
+    $("message").style.color = error ? "#ff7777" : "#9ee6a4";
   }
 
-  if(!Number.isFinite(price)||price<0){
-    say("saveStatus","Укажи корректную цену.");
-    return;
+  function showAdmin(isLoggedIn) {
+    $("loginPanel").classList.toggle("hidden", isLoggedIn);
+    $("adminPanel").classList.toggle("hidden", !isLoggedIn);
   }
 
-  if(id&&!/^\d+$/.test(id)){
-    say("saveStatus","Некорректный ID товара. Обнови список и выбери товар заново.");
-    return;
+  function resetForm() {
+    editingId = null;
+    currentImageUrl = null;
+    $("productForm").reset();
+    $("formTitle").textContent = "Добавить товар";
+    $("saveBtn").textContent = "Добавить товар";
+    $("cancelBtn").classList.add("hidden");
+    $("preview").classList.add("hidden");
+    $("preview").removeAttribute("src");
   }
 
-  if(selectedFile&&selectedFile.size>8*1024*1024){
-    say("saveStatus","Фото должно быть не больше 8 МБ.");
-    return;
+  function publicImageUrl(path) {
+    return client.storage.from(BUCKET).getPublicUrl(path)
+      .data.publicUrl;
   }
 
-  busy=true;
-  $("saveBtn").disabled=true;
-  $("cancelBtn").disabled=true;
-  $("refreshBtn").disabled=true;
-  say("saveStatus",selectedFile?"Загружаем фотографию…":"Сохраняем товар…");
+  async function loadProducts() {
+    $("refreshBtn").disabled = true;
+    message("Загружаю товары…");
 
-  try{
-    let imageUrl=null;
+    try {
+      const { data, error } = await client
+        .from(TABLE)
+        .select("*")
+        .order("id", { ascending: false });
 
-    if(selectedFile){
-      imageUrl=await uploadImage(selectedFile);
-      say("saveStatus","Фото загружено. Сохраняем товар…");
+      if (error) throw error;
+
+      products = data || [];
+      renderProducts();
+      message("Товаров загружено: " + products.length);
+    } catch (error) {
+      message("Не удалось загрузить товары: " + error.message, true);
+    } finally {
+      $("refreshBtn").disabled = false;
     }
-
-    const row={
-      name,
-      price,
-      category,
-      description
-    };
-
-    /*
-      Если выбрано новое фото — обновляем image_url.
-      Если новое фото не выбрано при редактировании — оставляем старую ссылку.
-    */
-    if(selectedFile){
-      row.image_url=imageUrl;
-    }else if(!id){
-      row.image_url=null;
-    }
-
-    const response=await fetch(
-      id
-        ?SUPABASE_URL+"/rest/v1/products?id=eq."+encodeURIComponent(id)
-        :SUPABASE_URL+"/rest/v1/products",
-      {
-        method:id?"PATCH":"POST",
-        headers:headers({
-          "Content-Type":"application/json",
-          Prefer:"return=representation"
-        }),
-        body:JSON.stringify(row)
-      }
-    );
-
-    const result=await responseData(response);
-
-    if(!Array.isArray(result)||result.length===0){
-      throw new Error("Изменение не подтверждено базой. Проверь ID и права продавца.");
-    }
-
-    resetForm();
-    say("saveStatus",id?"Товар обновлён!":"Товар добавлен!");
-    await loadProducts();
-
-  }catch(error){
-    say("saveStatus","Ошибка: "+error.message);
-  }finally{
-    busy=false;
-    $("saveBtn").disabled=false;
-    $("cancelBtn").disabled=false;
-    $("refreshBtn").disabled=false;
   }
-});
 
-/* ЗАГРУЗКА СПИСКА */
-async function loadProducts(){
-  if(!token)return;
+  function renderProducts() {
+    const container = $("products");
+    container.replaceChildren();
 
-  say("listStatus","Загружаем товары…");
-
-  try{
-    const response=await fetch(
-      SUPABASE_URL+"/rest/v1/products?select=*&order=id.desc",
-      {headers:headers()}
-    );
-
-    const rows=await responseData(response);
-
-    if(!Array.isArray(rows)){
-      throw new Error("Некорректный ответ базы.");
+    if (!products.length) {
+      container.textContent = "Товаров пока нет.";
+      return;
     }
 
-    const list=$("productList");
-    list.replaceChildren();
+    products.forEach(product => {
+      const card = document.createElement("article");
+      card.className = "product";
 
-    if(rows.length===0){
-      const empty=document.createElement("p");
-      empty.className="muted";
-      empty.textContent="Товаров пока нет.";
-      list.appendChild(empty);
-    }
+      const title = document.createElement("h3");
+      title.textContent = product.name || "Без названия";
+      card.appendChild(title);
 
-    rows.forEach(product=>{
-      const item=document.createElement("div");
-      item.className="item";
-
-      if(product.image_url&&validImageUrl(product.image_url)){
-        const image=document.createElement("img");
-        image.src=product.image_url;
-        image.alt=product.name||"Фото товара";
-        image.onerror=()=>{
-          image.replaceWith(makeThumb());
-        };
-        item.appendChild(image);
-      }else{
-        item.appendChild(makeThumb());
+      if (product.image_url) {
+        const img = document.createElement("img");
+        img.src = product.image_url;
+        img.alt = product.name || "Фото товара";
+        img.loading = "lazy";
+        card.appendChild(img);
       }
 
-      const info=document.createElement("div");
-      info.className="info";
+      const price = document.createElement("p");
+      price.textContent = "Цена: " + product.price + " ₽";
+      card.appendChild(price);
 
-      const title=document.createElement("strong");
-      title.textContent=product.name||"Без названия";
+      const category = document.createElement("p");
+      category.textContent = "Категория: " + (product.category || "—");
+      card.appendChild(category);
 
-      const detail=document.createElement("small");
-      detail.textContent=
-        (product.category||"Разное")+" · "+
-        Number(product.price||0).toLocaleString("ru-RU")+" ₽";
+      const description = document.createElement("p");
+      description.textContent = product.description || "";
+      card.appendChild(description);
 
-      info.append(title,detail);
+      const edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "secondary";
+      edit.textContent = "✏️ Редактировать";
+      edit.addEventListener("click", () => editProduct(product));
+      card.appendChild(edit);
 
-      const edit=document.createElement("button");
-      edit.type="button";
-      edit.className="secondary";
-      edit.textContent="Изменить";
-      edit.onclick=()=>editProduct(product);
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "danger";
+      del.textContent = "🗑️ Удалить";
+      del.addEventListener("click", () => deleteProduct(product.id, del));
+      card.appendChild(del);
 
-      const del=document.createElement("button");
-      del.type="button";
-      del.className="danger";
-      del.textContent="Удалить";
-      del.onclick=()=>deleteProduct(product);
-
-      item.append(info,edit,del);
-      list.appendChild(item);
+      container.appendChild(card);
     });
-
-    say("listStatus","Всего товаров: "+rows.length);
-
-  }catch(error){
-    say("listStatus","Ошибка загрузки: "+error.message);
-  }
-}
-
-function makeThumb(){
-  const thumb=document.createElement("div");
-  thumb.className="thumb";
-  thumb.textContent="🛍️";
-  return thumb;
-}
-
-/* РЕДАКТИРОВАНИЕ */
-function editProduct(product){
-  if(product.id==null||!/^\d+$/.test(String(product.id))){
-    say("listStatus","У товара некорректный ID. Проверь колонку id в Supabase.");
-    return;
   }
 
-  $("productId").value=String(product.id);
-  $("name").value=product.name||"";
-  $("price").value=product.price??0;
-  $("category").value=product.category||"Разное";
-  $("description").value=product.description||"";
-  $("imageFile").value="";
+  function editProduct(product) {
+    editingId = product.id;
+    currentImageUrl = product.image_url || null;
 
-  resetPreviewForEdit(product.image_url);
+    $("productName").value = product.name || "";
+    $("productPrice").value = product.price ?? "";
+    $("productCategory").value = product.category || "";
+    $("productDescription").value = product.description || "";
 
-  $("formTitle").textContent="Изменить товар";
-  $("saveBtn").textContent="Сохранить изменения";
-  $("cancelBtn").classList.remove("hidden");
-  say("saveStatus","");
+    $("formTitle").textContent = "Редактировать товар";
+    $("saveBtn").textContent = "Сохранить изменения";
+    $("cancelBtn").classList.remove("hidden");
 
-  window.scrollTo({top:0,behavior:"smooth"});
-}
+    $("preview").classList.toggle("hidden", !currentImageUrl);
+    if (currentImageUrl) $("preview").src = currentImageUrl;
 
-function resetPreviewForEdit(url){
-  clearPreviewObjectUrl();
-  const preview=$("imagePreview");
-
-  if(url&&validImageUrl(url)){
-    preview.src=url;
-    preview.classList.remove("hidden");
-  }else{
-    preview.removeAttribute("src");
-    preview.classList.add("hidden");
-  }
-}
-
-/* УДАЛЕНИЕ ТОВАРА */
-async function deleteProduct(product){
-  const id=product.id;
-
-  if(id==null||!/^\d+$/.test(String(id))){
-    say("listStatus","Ошибка: у товара нет корректного числового ID.");
-    return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    message("Редактируешь товар №" + product.id);
   }
 
-  if(!confirm("Удалить товар «"+product.name+"»?"))return;
-  if(busy)return;
-
-  busy=true;
-  $("refreshBtn").disabled=true;
-  say("listStatus","Удаляем товар…");
-
-  try{
-    const response=await fetch(
-      SUPABASE_URL+"/rest/v1/products?id=eq."+encodeURIComponent(id),
-      {
-        method:"DELETE",
-        headers:headers({Prefer:"return=representation"})
-      }
-    );
-
-    const result=await responseData(response);
-
-    if(!Array.isArray(result)||result.length===0){
-      throw new Error("Товар не удалён. Проверь права DELETE и наличие записи.");
+  async function deleteProduct(id, button) {
+    if (id === undefined || id === null || id === "") {
+      message("Ошибка: у товара отсутствует ID. Удаление отменено.", true);
+      return;
     }
 
-    say("listStatus","Товар удалён.");
-    await loadProducts();
+    if (!confirm("Точно удалить этот товар? Это действие нельзя отменить.")) {
+      return;
+    }
 
-  }catch(error){
-    say("listStatus","Ошибка удаления: "+error.message);
-  }finally{
-    busy=false;
-    $("refreshBtn").disabled=false;
+    button.disabled = true;
+    message("Удаляю товар №" + id + "…");
+
+    try {
+      const { data, error } = await client
+        .from(TABLE)
+        .delete()
+        .eq("id", id)
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error(
+          "Supabase не удалил строку. Проверь права DELETE (RLS) " +
+          "для таблицы products и войди в аккаунт продавца."
+        );
+      }
+
+      if (String(editingId) === String(id)) resetForm();
+
+      message("Товар №" + id + " удалён.");
+      await loadProducts();
+    } catch (error) {
+      message("Не удалось удалить товар:\n" + error.message, true);
+      button.disabled = false;
+    }
   }
-}
 
-$("refreshBtn").addEventListener("click",loadProducts);
+  $("productImage").addEventListener("change", () => {
+    const file = $("productImage").files[0];
+    if (!file) {
+      $("preview").classList.toggle("hidden", !currentImageUrl);
+      if (currentImageUrl) $("preview").src = currentImageUrl;
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      message("Выбери файл изображения.", true);
+      $("productImage").value = "";
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      message("Фото должно быть не больше 8 МБ.", true);
+      $("productImage").value = "";
+      return;
+    }
+
+    $("preview").src = URL.createObjectURL(file);
+    $("preview").classList.remove("hidden");
+  });
+
+  $("productForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    $("saveBtn").disabled = true;
+
+    try {
+      const { data: authData } = await client.auth.getSession();
+      if (!authData.session) {
+        throw new Error("Сессия закончилась. Войди в админку снова.");
+      }
+
+      const payload = {
+        name: $("productName").value.trim(),
+        price: Number($("productPrice").value),
+        category: $("productCategory").value.trim(),
+        description: $("productDescription").value.trim()
+      };
+
+      if (!payload.name || !payload.category ||
+          !Number.isFinite(payload.price) || payload.price < 0) {
+        throw new Error("Проверь название, категорию и цену.");
+      }
+
+      const file = $("productImage").files[0];
+
+      if (file) {
+        message("Загружаю фотографию…");
+        const ext = (file.name.split(".").pop() || "jpg")
+          .toLowerCase().replace(/[^a-z0-9]/g, "");
+        const path = Date.now() + "-" +
+          Math.random().toString(36).slice(2) + "." + ext;
+
+        const { error: uploadError } = await client.storage
+          .from(BUCKET)
+          .upload(path, file, {
+            upsert: false,
+            contentType: file.type
+          });
+
+        if (uploadError) throw uploadError;
+        payload.image_url = publicImageUrl(path);
+      } else if (!editingId) {
+        payload.image_url = null;
+      }
+
+      message("Сохраняю товар…");
+
+      let result;
+      if (editingId !== null) {
+        result = await client.from(TABLE)
+          .update(payload)
+          .eq("id", editingId)
+          .select("id");
+      } else {
+        result = await client.from(TABLE)
+          .insert(payload)
+          .select("id");
+      }
+
+      if (result.error) throw result.error;
+      if (!result.data || !result.data.length) {
+        throw new Error(
+          "Запись не подтверждена. Проверь права INSERT/UPDATE в Supabase."
+        );
+      }
+
+      resetForm();
+      message("Товар успешно сохранён.");
+      await loadProducts();
+    } catch (error) {
+      message("Ошибка сохранения:\n" + error.message, true);
+    } finally {
+      $("saveBtn").disabled = false;
+    }
+  });
+
+  $("loginBtn").addEventListener("click", async () => {
+    $("loginBtn").disabled = true;
+    try {
+      const { error } = await client.auth.signInWithPassword({
+        email: $("email").value.trim(),
+        password: $("password").value
+      });
+      if (error) throw error;
+
+      showAdmin(true);
+      await loadProducts();
+    } catch (error) {
+      message("Ошибка входа: " + error.message, true);
+    } finally {
+      $("loginBtn").disabled = false;
+    }
+  });
+
+  $("password").addEventListener("keydown", event => {
+    if (event.key === "Enter") $("loginBtn").click();
+  });
+
+  $("logoutBtn").addEventListener("click", async () => {
+    const { error } = await client.auth.signOut();
+    if (error) {
+      message("Ошибка выхода: " + error.message, true);
+      return;
+    }
+    showAdmin(false);
+    resetForm();
+    message("Ты вышел из админки.");
+  });
+
+  $("cancelBtn").addEventListener("click", resetForm);
+  $("refreshBtn").addEventListener("click", loadProducts);
+
+  client.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      message("Ошибка проверки сессии: " + error.message, true);
+      return;
+    }
+    showAdmin(!!data.session);
+    if (data.session) loadProducts();
+  });
+})();
 </script>
 </body>
 </html>
