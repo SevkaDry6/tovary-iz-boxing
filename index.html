@@ -608,6 +608,30 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
         data = await response.json();
       }
       products = data || [];
+
+      // Если новая таблица пуста, читаем старый каталог — данные из него не удалялись.
+      if (products.length === 0 && client) {
+        const legacy = await client
+          .from("products")
+          .select("id,name,price,description,size,category,image_url,tag,active,created_at")
+          .eq("active", true)
+          .order("created_at", {ascending: false});
+        if (!legacy.error && Array.isArray(legacy.data) && legacy.data.length) {
+          products = legacy.data.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            category: item.category || item.tag || "Без категории",
+            description: item.description,
+            size: item.size,
+            image_url: item.image_url,
+            active: item.active,
+            created_at: item.created_at
+          }));
+          console.info("Loaded legacy catalog products:", products.length);
+        }
+      }
+
       makeCategoryButtons();
       renderProducts();
       document.getElementById("catalog-note").textContent =
