@@ -73,10 +73,9 @@
         <textarea id="productDescription" rows="3"
           placeholder="Описание товара"></textarea>
 
-        <label for="productImage">Фотография из галереи</label>
-        <input id="productImage" type="file" accept="image/*">
-        <img id="preview" class="hidden" alt="Предпросмотр"
-          style="width:100%;max-height:240px;object-fit:contain">
+        <label for="productImage">Фотографии товара (до 2 штук, каждая до 4 МБ)</label>
+        <input id="productImage" type="file" accept="image/*" multiple>
+        <div id="previews" style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0"></div>
 
         <button id="saveBtn" type="submit">Добавить товар</button>
         <button id="cancelBtn" class="secondary hidden"
@@ -122,6 +121,27 @@
     $("adminPanel").classList.toggle("hidden", !isLoggedIn);
   }
 
+  function imageUrls(value) {
+    if (!value) return [];
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed.filter(url => typeof url === "string" && url);
+    } catch (_) {}
+    return [value];
+  }
+
+  function showPreviews(urls) {
+    const container = $("previews");
+    container.replaceChildren();
+    urls.slice(0, 2).forEach((url, index) => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "Фото товара " + (index + 1);
+      img.style.cssText = "width:calc(50% - 5px);max-height:200px;object-fit:contain;background:#101114;border-radius:8px";
+      container.appendChild(img);
+    });
+  }
+
   function resetForm() {
     editingId = null;
     currentImageUrl = null;
@@ -129,8 +149,7 @@
     $("formTitle").textContent = "Добавить товар";
     $("saveBtn").textContent = "Добавить товар";
     $("cancelBtn").classList.add("hidden");
-    $("preview").classList.add("hidden");
-    $("preview").removeAttribute("src");
+    $("previews").replaceChildren();
   }
 
   function publicImageUrl(path) {
@@ -280,13 +299,13 @@
       title.textContent = product.name || "Без названия";
       card.appendChild(title);
 
-      if (product.image_url) {
+      imageUrls(product.image_url).forEach((url, index) => {
         const img = document.createElement("img");
-        img.src = product.image_url;
-        img.alt = product.name || "Фото товара";
+        img.src = url;
+        img.alt = (product.name || "Фото товара") + " — фото " + (index + 1);
         img.loading = "lazy";
         card.appendChild(img);
-      }
+      });
 
       const price = document.createElement("p");
       price.textContent = "Цена: " + product.price + " ₽";
@@ -331,8 +350,7 @@
     $("saveBtn").textContent = "Сохранить изменения";
     $("cancelBtn").classList.remove("hidden");
 
-    $("preview").classList.toggle("hidden", !currentImageUrl);
-    if (currentImageUrl) $("preview").src = currentImageUrl;
+    showPreviews(imageUrls(currentImageUrl));
 
     window.scrollTo({ top: 0, behavior: "smooth" });
     message("Редактируешь товар №" + product.id);
@@ -378,27 +396,27 @@
   }
 
   $("productImage").addEventListener("change", () => {
-    const file = $("productImage").files[0];
-    if (!file) {
-      $("preview").classList.toggle("hidden", !currentImageUrl);
-      if (currentImageUrl) $("preview").src = currentImageUrl;
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      message("Выбери файл изображения.", true);
+    const files = Array.from($("productImage").files || []);
+    if (files.length > 2) {
+      message("Можно выбрать не больше 2 фотографий.", true);
       $("productImage").value = "";
+      showPreviews(imageUrls(currentImageUrl));
       return;
     }
-
-    if (file.size > 8 * 1024 * 1024) {
-      message("Фото должно быть не больше 8 МБ.", true);
+    const invalid = files.find(file => !file.type.startsWith("image/") || file.size > 4 * 1024 * 1024);
+    if (invalid) {
+      message(!invalid.type.startsWith("image/")
+        ? "Выбери только файлы изображений."
+        : "Каждая фотография должна быть не больше 4 МБ.", true);
       $("productImage").value = "";
+      showPreviews(imageUrls(currentImageUrl));
       return;
     }
-
-    $("preview").src = URL.createObjectURL(file);
-    $("preview").classList.remove("hidden");
+    if (files.length) {
+      showPreviews(files.map(file => URL.createObjectURL(file)));
+    } else {
+      showPreviews(imageUrls(currentImageUrl));
+    }
   });
 
   $("productForm").addEventListener("submit", async event => {
@@ -423,27 +441,35 @@
         throw new Error("Проверь название, категорию и цену.");
       }
 
-      const file = $("productImage").files[0];
+      const files = Array.from($("productImage").files || []);
+      if (files.length > 2) throw new Error("Можно добавить не больше 2 фотографий.");
+      const oversized = files.find(file => file.size > 4 * 1024 * 1024);
+      if (oversized) throw new Error("Каждая фотография должна быть не больше 4 МБ.");
+      if (files.some(file => !file.type.startsWith("image/"))) {
+        throw new Error("Выбери только файлы изображений.");
+      }
 
-      if (file) {
-        message("Загружаю фотографию…");
-        const ext = (file.name.split(".").pop() || "jpg")
-          .toLowerCase().replace(/[^a-z0-9]/g, "");
-        const path = Date.now() + "-" +
-          Math.random().toString(36).slice(2) + "." + ext;
-
-        const { error: uploadError } = await client.storage
-          .from(BUCKET)
-          .upload(path, file, {
-            upsert: false,
-            contentType: file.type
-          });
-
-        if (uploadError) throw uploadError;
-        payload.image_url = publicImageUrl(path);
+      if (files.length) {
+        message("Загружаю фотографии…");
+        const uploadedUrls = [];
+        for (const file of files) {
+          const ext = (file.name.split(".").pop() || "jpg")
+            .toLowerCase().replace(/[^a-z0-9]/g, "");
+          const path = Date.now() + "-" +
+            Math.random().toString(36).slice(2) + "." + ext;
+          const { error: uploadError } = await client.storage
+            .from(BUCKET)
+            .upload(path, file, {
+              upsert: false,
+              contentType: file.type
+            });
+          if (uploadError) throw uploadError;
+          uploadedUrls.push(publicImageUrl(path));
+        }
+        payload.image_url = JSON.stringify(uploadedUrls);
       } else if (!editingId) {
-  payload.image_url = "";
-}
+        payload.image_url = "";
+      }
 
       message("Сохраняю товар…");
 
