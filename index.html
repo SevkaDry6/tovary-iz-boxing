@@ -674,5 +674,86 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   loadReviews();
 })();
 </script>
+
+<style>
+/* Boxing Store helper chat */
+.boxing-chat-launch{position:fixed;right:20px;bottom:20px;z-index:1200;display:flex;align-items:center;gap:10px;padding:13px 17px;border:1px solid #a7f3d0;border-radius:999px;background:linear-gradient(135deg,#a7f3d0,#10b981);color:#07110c;font-weight:850;font-size:14px;box-shadow:0 10px 35px #0008;cursor:pointer}
+.boxing-chat-launch .chat-icon{font-size:20px}
+.boxing-chat-panel{position:fixed;right:20px;bottom:84px;z-index:1200;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100dvh - 120px));display:none;flex-direction:column;overflow:hidden;border:1px solid #34d39955;border-radius:20px;background:#101318;color:#f4f5f7;box-shadow:0 24px 80px #000b;font-family:inherit}
+.boxing-chat-panel.is-open{display:flex}
+.boxing-chat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;background:linear-gradient(120deg,#17271f,#111318);border-bottom:1px solid #ffffff15}
+.boxing-chat-brand{display:flex;align-items:center;gap:10px;font-weight:850}
+.boxing-chat-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#34d399;color:#07110c;font-weight:950}
+.boxing-chat-sub{display:block;margin-top:3px;color:#a7f3d0;font-size:11px;font-weight:600}
+.boxing-chat-close{width:34px;height:34px;border:1px solid #ffffff20;border-radius:10px;background:#ffffff08;color:#fff;font-size:22px}
+.boxing-chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.boxing-chat-msg{max-width:90%;padding:11px 12px;border:1px solid #ffffff12;border-radius:14px;background:#1a1d24;color:#e6e8ed;font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.boxing-chat-msg.user{align-self:flex-end;background:#103c2b;border-color:#34d39945}
+.boxing-chat-quick{display:flex;flex-wrap:wrap;gap:7px;padding:0 12px 12px}
+.boxing-chat-quick button{padding:8px 10px;border:1px solid #34d39955;border-radius:999px;background:#34d3990d;color:#a7f3d0;font-size:11px;font-weight:750;cursor:pointer}
+.boxing-chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid #ffffff15;background:#0b0d10}
+.boxing-chat-input{min-width:0;flex:1;padding:12px;border:1px solid #343943;border-radius:12px;background:#171a20;color:#fff;font:inherit;font-size:13px;outline:none}
+.boxing-chat-input:focus{border-color:#34d399}
+.boxing-chat-send{padding:0 14px;border:0;border-radius:12px;background:#34d399;color:#07110c;font-weight:900;cursor:pointer}
+.boxing-chat-note{padding:0 13px 10px;background:#0b0d10;color:#818895;font-size:10px;line-height:1.4}
+@media(max-width:480px){.boxing-chat-launch{right:13px;bottom:13px;padding:12px 15px}.boxing-chat-panel{right:10px;bottom:75px;width:calc(100vw - 20px);height:min(560px,calc(100dvh - 100px))}}
+</style>
+<button class="boxing-chat-launch" id="boxing-chat-launch" type="button" aria-expanded="false" aria-controls="boxing-chat-panel"><span class="chat-icon" aria-hidden="true">✦</span> Помощник магазина</button>
+<section class="boxing-chat-panel" id="boxing-chat-panel" role="dialog" aria-label="Помощник магазина" aria-modal="false">
+  <div class="boxing-chat-head">
+    <div class="boxing-chat-brand"><span class="boxing-chat-mark">B</span><span>Товары из Boxing<span class="boxing-chat-sub">Помощник магазина · онлайн</span></span></div>
+    <button class="boxing-chat-close" id="boxing-chat-close" type="button" aria-label="Закрыть чат">×</button>
+  </div>
+  <div class="boxing-chat-messages" id="boxing-chat-messages" aria-live="polite">
+    <div class="boxing-chat-msg">Привет! 👋 Я помощник магазина «Товары из Boxing». Могу подсказать, как посмотреть товары, уточнить наличие или связаться с продавцом.</div>
+  </div>
+  <div class="boxing-chat-quick" id="boxing-chat-quick">
+    <button type="button" data-chat-question="Как посмотреть товары?">Каталог товаров</button>
+    <button type="button" data-chat-question="Как узнать наличие?">Наличие</button>
+    <button type="button" data-chat-question="Где получить заказ?">Получение заказа</button>
+    <button type="button" data-chat-question="Как связаться с продавцом?">Связаться с продавцом</button>
+  </div>
+  <form class="boxing-chat-form" id="boxing-chat-form">
+    <input class="boxing-chat-input" id="boxing-chat-input" type="text" maxlength="500" autocomplete="off" placeholder="Напиши свой вопрос…" aria-label="Твой вопрос" required>
+    <button class="boxing-chat-send" type="submit" aria-label="Отправить сообщение">➤</button>
+  </form>
+  <div class="boxing-chat-note">Автоответчик отвечает на частые вопросы. Наличие и детали покупки уточняй у продавца.</div>
+</section>
+<script>
+(() => {
+  const launch = document.getElementById("boxing-chat-launch");
+  const panel = document.getElementById("boxing-chat-panel");
+  const close = document.getElementById("boxing-chat-close");
+  const messages = document.getElementById("boxing-chat-messages");
+  const form = document.getElementById("boxing-chat-form");
+  const input = document.getElementById("boxing-chat-input");
+  const quick = document.getElementById("boxing-chat-quick");
+  const sellerUrl = "https://max.ru/u/f9LHodD0cOIAodaIAJ2qZbJ5KEaoyZ4JLZZicj-DRIgEfDW0oN_xFXRcRgw";
+  function openChat(){panel.classList.add("is-open");launch.setAttribute("aria-expanded","true");input.focus();}
+  function closeChat(){panel.classList.remove("is-open");launch.setAttribute("aria-expanded","false");launch.focus();}
+  function addMessage(text, who){const el=document.createElement("div");el.className="boxing-chat-msg"+(who==="user"?" user":"");el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;}
+  function answer(question){
+    const q=question.toLocaleLowerCase("ru-RU");
+    if(/оскорб|идиот|дурак|туп(ой|ая|ые)|пош[её]л|нах[её]р|хуй|бля|мат/.test(q)) return "Давай общаться уважительно, пожалуйста. Я помогу с вопросами о товарах и заказе. Если вопрос не решился, напиши продавцу.";
+    if(/привет|здравств|добрый|хай|hello/.test(q)) return "Привет! 👋 Подскажу по каталогу и покупке. Что хочешь узнать?";
+    if(/каталог|товар|посмотр|ассортимент|что есть/.test(q)) return "Открой раздел «Каталог товаров» на этой странице. Там можно искать товары, выбирать категории и смотреть цены и размеры.";
+    if(/цен|стоим|сколько стоит|рубл/.test(q)) return "Цены указаны в карточках товаров в каталоге. Если цена или наличие требуют уточнения, напиши продавцу в MAX.";
+    if(/налич|есть ли|доступен|продан/.test(q)) return "Посмотри статус «В наличии» или «Продано» в карточке товара. Перед покупкой лучше подтвердить наличие у продавца.";
+    if(/размер|размерн|подойд[её]т|см/.test(q)) return "Если размер указан в карточке товара, ориентируйся на него. Для уточнения посадки и замеров напиши продавцу в MAX.";
+    if(/достав|отправ|почт|привез/.test(q)) return "Сейчас на сайте указано, что товары доступны только в селе Сростки. Возможность доставки нужно отдельно уточнить у продавца.";
+    if(/получ|забрат|где находится|сростк/.test(q)) return "По информации на сайте, товары доступны только в селе Сростки. Напиши продавцу, чтобы согласовать место и время получения.";
+    if(/оплат|перевод|деньг|возврат|обмен|заказ|купить|покуп/.test(q)) return "Условия оплаты, заказа и возможного возврата лучше согласовать с продавцом до покупки. Нажми «Связаться с продавцом» — он уточнит детали.";
+    if(/продав|связ|контакт|написать|max|макс/.test(q)) return "Нажми кнопку ниже, чтобы написать продавцу в MAX.";
+    return "Пока я умею отвечать на частые вопросы о каталоге, ценах, наличии и получении товаров. Для точного ответа напиши продавцу в MAX.";
+  }
+  function send(question){const q=String(question||"").trim();if(!q)return;addMessage(q,"user");addMessage(answer(q),"bot");if(/продав|связ|контакт|написать|max|макс|не решился|уточнить/.test(q.toLocaleLowerCase("ru-RU"))){const link=document.createElement("a");link.href=sellerUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Связаться с продавцом в MAX ↗";link.className="boxing-chat-msg";link.style.color="#a7f3d0";link.style.textDecoration="underline";messages.appendChild(link);messages.scrollTop=messages.scrollHeight;}}
+  launch.addEventListener("click",()=>panel.classList.contains("is-open")?closeChat():openChat());
+  close.addEventListener("click",closeChat);
+  form.addEventListener("submit",e=>{e.preventDefault();send(input.value);input.value="";input.focus();});
+  quick.addEventListener("click",e=>{const b=e.target.closest("button[data-chat-question]");if(b)send(b.dataset.chatQuestion);});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("is-open"))closeChat();});
+})();
+</script>
+
 </body>
 </html>
