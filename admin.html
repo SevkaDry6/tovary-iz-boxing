@@ -311,6 +311,19 @@
       price.textContent = "Цена: " + product.price + " ₽";
       card.appendChild(price);
 
+      const status = document.createElement("p");
+      status.textContent = product.sold ? "🔴 Статус: ПРОДАНО" : "🟢 Статус: В НАЛИЧИИ";
+      status.style.fontWeight = "bold";
+      status.style.color = product.sold ? "#ff8a8a" : "#9ee6a4";
+      card.appendChild(status);
+
+      const soldToggle = document.createElement("button");
+      soldToggle.type = "button";
+      soldToggle.className = "secondary";
+      soldToggle.textContent = product.sold ? "↩️ Вернуть в наличие" : "🔴 Отметить как проданный";
+      soldToggle.addEventListener("click", () => setSoldStatus(product, !product.sold, soldToggle));
+      card.appendChild(soldToggle);
+
       const category = document.createElement("p");
       category.textContent = "Категория: " + (product.category || "—");
       card.appendChild(category);
@@ -335,6 +348,25 @@
 
       container.appendChild(card);
     });
+  }
+
+  async function setSoldStatus(product, sold, button) {
+    button.disabled = true;
+    message(sold ? "Отмечаю товар как проданный…" : "Возвращаю товар в наличие…");
+    try {
+      const { data, error } = await client.from(TABLE)
+        .update({ sold })
+        .eq("id", product.id)
+        .select("id,sold");
+      if (error) throw error;
+      if (!data || !data.length) throw new Error("Статус не изменён. Проверь права UPDATE в Supabase.");
+      product.sold = sold;
+      renderProducts();
+      message(sold ? "Товар отмечен как проданный." : "Товар снова доступен для покупки.");
+    } catch (error) {
+      message("Не удалось изменить статус: " + error.message, true);
+      button.disabled = false;
+    }
   }
 
   function editProduct(product) {
