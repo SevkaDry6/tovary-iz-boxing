@@ -30,7 +30,9 @@
       background: #1b1d22; border: 1px solid #34363d;
       padding: 14px; margin: 14px 0; border-radius: 12px;
     }
-    .product img { width: 100%; max-height: 230px; object-fit: contain; }\n    .image-previews { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }\n    .image-previews img { width:78px; height:78px; object-fit:cover; border:1px solid #41434a; border-radius:8px; }
+    .product img { width: 100%; max-height: 230px; object-fit: contain; }
+    .image-previews { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }
+    .image-previews img { width:78px; height:78px; object-fit:cover; border:1px solid #41434a; border-radius:8px; }
     .muted { color: #b8bac2; font-size: 14px; }
     #message { white-space: pre-wrap; overflow-wrap: anywhere; }
     .hidden { display: none; }
@@ -73,10 +75,10 @@
         <textarea id="productDescription" rows="3"
           placeholder="Описание товара"></textarea>
 
-        <label for="productImage">Фотография из галереи</label>
-        <input id="productImage" type="file" accept="image/*">
-        <img id="preview" class="hidden" alt="Предпросмотр"
-          style="width:100%;max-height:240px;object-fit:contain">
+        <label for="productImage">Фотографии товара (можно выбрать несколько)</label>
+        <input id="productImage" type="file" accept="image/*" multiple>
+        <p class="muted">Можно добавить несколько фото за раз. При редактировании новые фото добавятся к уже сохранённым.</p>
+        <div id="previewGallery" class="image-previews"></div>
 
         <button id="saveBtn" type="submit">Добавить товар</button>
         <button id="cancelBtn" class="secondary hidden"
