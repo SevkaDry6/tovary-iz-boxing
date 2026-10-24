@@ -31,8 +31,6 @@
       padding: 14px; margin: 14px 0; border-radius: 12px;
     }
     .product img { width: 100%; max-height: 230px; object-fit: contain; }
-    .image-previews { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }
-    .image-previews img { width:78px; height:78px; object-fit:cover; border:1px solid #41434a; border-radius:8px; }
     .muted { color: #b8bac2; font-size: 14px; }
     #message { white-space: pre-wrap; overflow-wrap: anywhere; }
     .hidden { display: none; }
@@ -75,10 +73,10 @@
         <textarea id="productDescription" rows="3"
           placeholder="Описание товара"></textarea>
 
-        <label for="productImage">Фотографии товара (можно выбрать несколько)</label>
-        <input id="productImage" type="file" accept="image/*" multiple>
-        <p class="muted">Можно добавить несколько фото за раз. При редактировании новые фото добавятся к уже сохранённым.</p>
-        <div id="previewGallery" class="image-previews"></div>
+        <label for="productImage">Фотография из галереи</label>
+        <input id="productImage" type="file" accept="image/*">
+        <img id="preview" class="hidden" alt="Предпросмотр"
+          style="width:100%;max-height:240px;object-fit:contain">
 
         <button id="saveBtn" type="submit">Добавить товар</button>
         <button id="cancelBtn" class="secondary hidden"
@@ -110,7 +108,7 @@
   );
 
   let editingId = null;
-  let currentImageUrls = [];
+  let currentImageUrl = null;
   let products = [];
   let reviews = [];
 
@@ -126,15 +124,16 @@
 
   function resetForm() {
     editingId = null;
-    currentImageUrls = [];
+    currentImageUrl = null;
     $("productForm").reset();
     $("formTitle").textContent = "Добавить товар";
     $("saveBtn").textContent = "Добавить товар";
     $("cancelBtn").classList.add("hidden");
-    $("previewGallery").replaceChildren();
+    $("preview").classList.add("hidden");
+    $("preview").removeAttribute("src");
   }
 
-  function getProductImages(value) {\n    if (!value) return [];\n    try {\n      const parsed = JSON.parse(value);\n      if (Array.isArray(parsed)) return parsed.filter(url => typeof url === "string" && url);\n    } catch (_) {}\n    return [String(value)];\n  }\n\n  function renderImagePreviews(urls) {\n    const gallery = $("previewGallery");\n    gallery.replaceChildren();\n    urls.forEach(url => {\n      const img = document.createElement("img");\n      img.src = url;\n      img.alt = "Фото товара";\n      gallery.appendChild(img);\n    });\n  }\n\n  function publicImageUrl(path) {
+  function publicImageUrl(path) {
     return client.storage.from(BUCKET).getPublicUrl(path)
       .data.publicUrl;
   }
@@ -321,7 +320,7 @@
 
   function editProduct(product) {
     editingId = product.id;
-    currentImageUrls = getProductImages(product.image_url);
+    currentImageUrl = product.image_url || null;
 
     $("productName").value = product.name || "";
     $("productPrice").value = product.price ?? "";
@@ -332,7 +331,8 @@
     $("saveBtn").textContent = "Сохранить изменения";
     $("cancelBtn").classList.remove("hidden");
 
-    renderImagePreviews(currentImageUrls);
+    $("preview").classList.toggle("hidden", !currentImageUrl);
+    if (currentImageUrl) $("preview").src = currentImageUrl;
 
     window.scrollTo({ top: 0, behavior: "smooth" });
     message("Редактируешь товар №" + product.id);
@@ -378,23 +378,27 @@
   }
 
   $("productImage").addEventListener("change", () => {
-    const files = Array.from($("productImage").files || []);
-    for (const file of files) {
-      if (!file.type.startsWith("image/")) {
-        message("Выбери только файлы изображений.", true);
-        $("productImage").value = "";
-        renderImagePreviews(currentImageUrls);
-        return;
-      }
-      if (file.size > 8 * 1024 * 1024) {
-        message("Каждое фото должно быть не больше 8 МБ.", true);
-        $("productImage").value = "";
-        renderImagePreviews(currentImageUrls);
-        return;
-      }
+    const file = $("productImage").files[0];
+    if (!file) {
+      $("preview").classList.toggle("hidden", !currentImageUrl);
+      if (currentImageUrl) $("preview").src = currentImageUrl;
+      return;
     }
-    const temporaryUrls = files.map(file => URL.createObjectURL(file));
-    renderImagePreviews([...currentImageUrls, ...temporaryUrls]);
+
+    if (!file.type.startsWith("image/")) {
+      message("Выбери файл изображения.", true);
+      $("productImage").value = "";
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      message("Фото должно быть не больше 8 МБ.", true);
+      $("productImage").value = "";
+      return;
+    }
+
+    $("preview").src = URL.createObjectURL(file);
+    $("preview").classList.remove("hidden");
   });
 
   $("productForm").addEventListener("submit", async event => {
@@ -419,15 +423,13 @@
         throw new Error("Проверь название, категорию и цену.");
       }
 
-      const files = Array.from($("productImage").files || []);
-      const imageUrls = [...currentImageUrls];
+      const file = $("productImage").files[0];
 
-      for (let index = 0; index < files.length; index++) {
-        const file = files[index];
-        message("Загружаю фото " + (index + 1) + " из " + files.length + "…");
+      if (file) {
+        message("Загружаю фотографию…");
         const ext = (file.name.split(".").pop() || "jpg")
           .toLowerCase().replace(/[^a-z0-9]/g, "");
-        const path = Date.now() + "-" + index + "-" +
+        const path = Date.now() + "-" +
           Math.random().toString(36).slice(2) + "." + ext;
 
         const { error: uploadError } = await client.storage
@@ -438,12 +440,10 @@
           });
 
         if (uploadError) throw uploadError;
-        imageUrls.push(publicImageUrl(path));
-      }
-
-      payload.image_url = imageUrls.length > 1
-        ? JSON.stringify(imageUrls)
-        : (imageUrls[0] || "");
+        payload.image_url = publicImageUrl(path);
+      } else if (!editingId) {
+  payload.image_url = "";
+}
 
       message("Сохраняю товар…");
 
