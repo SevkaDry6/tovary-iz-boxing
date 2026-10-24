@@ -588,13 +588,51 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   }
 
   async function loadProducts() {
-    showState("Загружаем каталог…", "Подключаемся к магазину.");
+    showState("Загружаем каталог…", "Проверяем подключение к базе (до 8 секунд).");
     const errors = [];
+    function withTimeout(promise, ms, label) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error(label + ": превышено время ожидания")), ms))
+      ]);
+    }
     async function readTable(tableName) {
-      if (!client) throw new Error("Библиотека Supabase не загрузилась");
-      const result = await client.from(tableName).select("*").order("created_at", {ascending: false});
-      if (result.error) throw result.error;
-      return Array.isArray(result.data) ? result.data : [];
+      let clientError = null;
+      if (client) {
+        try {
+          const result = await withTimeout(
+            client.from(tableName).select("*").order("created_at", {ascending: false}),
+            8000,
+            "Supabase " + tableName
+          );
+          if (result.error) throw result.error;
+          return Array.isArray(result.data) ? result.data : [];
+        } catch (error) {
+          clientError = error;
+        }
+      }
+      // Прямой REST-запрос — запасной путь, если запрос через библиотеку завис.
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      try {
+        const url = SUPABASE_URL + "/rest/v1/" + encodeURIComponent(tableName) + "?select=*&order=created_at.desc";
+        const response = await fetch(url, {
+          method: "GET",
+          headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY },
+          signal: controller.signal,
+          cache: "no-store"
+        });
+        if (!response.ok) {
+          const body = await response.text().catch(() => "");
+          throw new Error("HTTP " + response.status + (body ? ": " + body.slice(0, 180) : ""));
+        }
+        return await response.json();
+      } catch (error) {
+        throw new Error((clientError ? "Библиотека: " + (clientError.message || String(clientError)) + "; " : "") +
+          "REST: " + (error.name === "AbortError" ? "тайм-аут запроса" : (error.message || String(error))));
+      } finally {
+        clearTimeout(timeoutId);
+      }
     }
     function normalizeProduct(item) {
       return {
@@ -610,18 +648,14 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       };
     }
     try {
-      if (!client) throw new Error("Не загрузилась библиотека Supabase (CDN).");
       let loaded = [];
-      try {
-        loaded = (await readTable("store_products")).filter(item => item.active !== false && item.is_active !== false);
-      } catch (error) {
-        errors.push("store_products: " + (error.message || String(error)));
-      }
-      if (!loaded.length) {
+      for (const tableName of ["store_products", "products"]) {
         try {
-          loaded = (await readTable("products")).filter(item => item.active !== false && item.is_active !== false);
+          const rows = await readTable(tableName);
+          loaded = rows.filter(item => item.active !== false && item.is_active !== false);
+          if (loaded.length) break;
         } catch (error) {
-          errors.push("products: " + (error.message || String(error)));
+          errors.push(tableName + ": " + (error.message || String(error)));
         }
       }
       products = loaded.map(normalizeProduct);
@@ -629,15 +663,15 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       renderProducts();
       document.getElementById("catalog-note").textContent =
         products.length ? products.length + (products.length === 1 ? " товар в каталоге" : " товара в каталоге") :
-        "Каталог пуст или нет доступа к таблицам. " + (errors.join(" | ") || "В таблицах не найдено активных товаров.");
+        "Каталог не загрузился или таблицы пусты. " + (errors.join(" | ") || "Активные товары не найдены.");
       if (!products.length) {
         showState("Товары пока не отображаются", errors.length
           ? "Причина: " + errors.join(" | ")
-          : "Проверены таблицы store_products и products, но активных товаров не найдено. Данные не удалялись этим исправлением.", true);
+          : "Проверены таблицы store_products и products, но активных товаров не найдено. Данные этим исправлением не удалялись.", true);
       }
     } catch (error) {
       console.error("Catalog load error:", error);
-      showState("Не удалось загрузить товары", "Ошибка подключения: " + (error.message || String(error)) + ". Проверь интернет и настройки доступа Supabase.", true);
+      showState("Не удалось загрузить товары", "Ошибка: " + (error.message || String(error)), true);
       document.getElementById("catalog-note").textContent = "Ошибка загрузки каталога";
     }
   }
