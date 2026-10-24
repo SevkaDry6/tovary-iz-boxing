@@ -25,10 +25,10 @@ header{position:sticky;top:0;z-index:20;background:#090a0de8;backdrop-filter:blu
 .nav-links{display:flex;align-items:center;gap:28px;color:#b6bac3;font-size:13px}
 .nav-links a:hover{color:var(--gold2)}
 .nav-cta{border:1px solid #34d39965;border-radius:999px;padding:11px 16px;color:var(--gold2)!important}
-.hero{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(190px,.65fr);align-items:stretch;gap:9px;margin:10px 0 7px;padding:0;border:0;background:transparent;overflow:visible}
-.hero-copy{position:relative;isolation:isolate;overflow:hidden;z-index:1;padding:15px 19px;border:1px solid #ffffff12;border-radius:18px;background:linear-gradient(145deg,#17191e,#101115);box-shadow:0 4px 16px #0002}
-.hero-copy:before{content:"";position:absolute;z-index:-1;right:-70px;top:-110px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#34d39910,transparent 70%)}
-.hero-glass{position:relative;isolation:isolate;overflow:hidden;min-height:0;display:flex;flex-direction:column;justify-content:space-between;padding:14px 17px;border:1px solid #34d39922;border-radius:18px;background:linear-gradient(145deg,#151d1a,#111216 78%);box-shadow:0 4px 16px #0002}
+.hero{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(190px,.65fr);align-items:stretch;gap:12px;margin:14px 0 10px;padding:0;border:0;background:transparent;overflow:visible}
+.hero-copy{position:relative;isolation:isolate;overflow:hidden;z-index:1;padding:clamp(22px,3vw,38px);border:1px solid #34d39938;border-radius:22px;background:radial-gradient(ellipse at 8% 0%,#34d39920,transparent 48%),radial-gradient(ellipse at 100% 100%,#10b98112,transparent 42%),linear-gradient(135deg,#171d1b 0%,#101413 54%,#0b0e0d 100%);box-shadow:0 18px 50px #0005,inset 0 1px #ffffff08}
+.hero-copy:before{content:"";position:absolute;z-index:-1;right:-52px;top:-95px;width:250px;height:250px;border:1px solid #34d3991c;border-radius:50%;background:radial-gradient(circle,#34d39918 0%,#34d39906 42%,transparent 70%);box-shadow:0 0 0 18px #34d39905,0 0 0 38px #34d39903}
+.hero-glass{position:relative;isolation:isolate;overflow:hidden;min-height:0;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(18px,2.4vw,28px);border:1px solid #34d39935;border-radius:22px;background:radial-gradient(ellipse at 85% 10%,#34d39922,transparent 54%),linear-gradient(150deg,#17211d,#101513 72%,#0c100e);box-shadow:0 18px 50px #0004,inset 0 1px #ffffff08}
 .hero-glass:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 80% 5%,#34d39914,transparent 55%),linear-gradient(140deg,#ffffff04,transparent 60%)}
 .glass-orb{position:absolute;z-index:-1;right:-58px;top:5px;width:96px;height:96px;border:1px solid #a7f3d021;border-radius:50%;box-shadow:0 0 0 10px #34d39905,0 0 0 22px #34d39903}
 .glass-topline{display:flex;align-items:center;gap:7px;color:#d9dce2;font-size:8px;font-weight:800;letter-spacing:1.3px}
@@ -39,7 +39,7 @@ header{position:sticky;top:0;z-index:20;background:#090a0de8;backdrop-filter:blu
 .glass-bottom{display:flex;justify-content:space-between;gap:7px;color:#a9adb7;font-size:7px;font-weight:750;letter-spacing:.8px}
 @media(max-width:760px){.hero{grid-template-columns:1fr;gap:8px}.hero-copy{padding:16px 17px;border-radius:16px}.hero-glass{min-height:118px;padding:13px 16px;border-radius:16px}.glass-label{margin-top:10px}.glass-divider{margin:9px 0 7px}}
 .hero:before{content:"";position:absolute;z-index:-1;width:420px;height:420px;right:-100px;top:-170px;border-radius:50%;background:radial-gradient(circle,#34d39925 0,transparent 68%)}
-.hero:after{content:"BOXING";position:absolute;z-index:-1;right:-15px;bottom:-40px;font-size:clamp(70px,14vw,175px);font-weight:950;letter-spacing:-.09em;color:#ffffff06;white-space:nowrap}
+.hero:after{content:"BOXING";position:absolute;z-index:-1;right:-15px;bottom:-40px;font-size:clamp(70px,14vw,175px);font-weight:950;letter-spacing:-.09em;color:#34d39908;white-space:nowrap}
 .eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--gold2);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
 .eyebrow:before{content:"";width:24px;height:1px;background:var(--gold)}
 h1{max-width:720px;margin:13px 0 10px;font-size:clamp(32px,4.5vw,52px);line-height:1.03;letter-spacing:-.055em}
