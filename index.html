@@ -55,7 +55,15 @@ h2{margin:8px 0 0;font-size:clamp(27px,4vw,39px);letter-spacing:-.04em}
 .search-wrap:before{content:"⌕";position:absolute;left:15px;top:8px;font-size:24px;color:#9ca1ad}
 .search{width:100%;padding:14px 15px 14px 43px;background:#111318;border:1px solid var(--line);border-radius:13px;color:var(--text);outline:none}
 .search:focus{border-color:#c6a35d}
-.categories{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.categories{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.price-filters{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 22px;padding:14px;border:1px solid #ffffff12;border-radius:14px;background:#111318}
+.price-filters-title{color:#c7cbd3;font-size:12px;font-weight:750;margin-right:3px}
+.price-filter-field{display:flex;align-items:center;gap:8px;color:#9da2ad;font-size:12px}
+.price-filter-field input{width:112px;min-width:0;padding:10px 11px;border:1px solid #343741;border-radius:9px;background:#090a0d;color:#f4f5f7;outline:none}
+.price-filter-field input:focus{border-color:#c6a35d}
+.price-filter-reset{padding:10px 12px;border:1px solid #e8c47755;border-radius:9px;background:#e8c47712;color:var(--gold2);font-size:12px;font-weight:750}
+.price-filter-reset:hover{background:#e8c47722}
+@media(max-width:520px){.price-filters{gap:9px;padding:12px}.price-filters-title{width:100%}.price-filter-field{flex:1;justify-content:space-between;gap:5px}.price-filter-field input{width:82px}.price-filter-reset{width:100%}}
 .category{border:1px solid var(--line);border-radius:999px;background:#111318;color:#aeb3bd;padding:10px 15px;font-size:12px;transition:.2s}
 .category:hover,.category.active{border-color:#b9954f;background:#e8c477;color:#17140e}
 .products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
@@ -162,6 +170,16 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
     <div class="categories" id="categories">
       <button class="category active" type="button" data-category="Все">Все товары</button>
     </div>
+    <div class="price-filters" aria-label="Фильтр по цене">
+      <span class="price-filters-title">Цена, ₽</span>
+      <label class="price-filter-field">От
+        <input id="price-min" type="number" min="0" step="any" inputmode="decimal" placeholder="0" aria-label="Цена от">
+      </label>
+      <label class="price-filter-field">До
+        <input id="price-max" type="number" min="0" step="any" inputmode="decimal" placeholder="Без лимита" aria-label="Цена до">
+      </label>
+      <button class="price-filter-reset" id="price-reset" type="button">Сбросить цену</button>
+    </div>
     <div class="products" id="product-list" aria-live="polite">
       <div class="state"><strong>Загружаем каталог…</strong><p>Секунду, проверяем новые товары.</p></div>
     </div>
@@ -206,6 +224,9 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   const list = document.getElementById("product-list");
   const search = document.getElementById("search");
   const categories = document.getElementById("categories");
+  const priceMin = document.getElementById("price-min");
+  const priceMax = document.getElementById("price-max");
+  const priceReset = document.getElementById("price-reset");
   let products = [];
   let reviews = [];
   let activeCategory = "Все";
@@ -247,10 +268,15 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   }
   function renderProducts() {
     const query = search.value.trim().toLocaleLowerCase("ru-RU");
+    const minValue = priceMin.value.trim() === "" ? null : Number(priceMin.value);
+    const maxValue = priceMax.value.trim() === "" ? null : Number(priceMax.value);
     const filtered = products.filter(product => {
       const categoryMatch = activeCategory === "Все" || safeText(product.category).trim() === activeCategory;
       const searchable = [product.name, product.description, product.category, product.size].map(safeText).join(" ").toLocaleLowerCase("ru-RU");
-      return categoryMatch && searchable.includes(query);
+      const productPrice = Number(product.price);
+      const minMatch = minValue === null || !Number.isFinite(minValue) || productPrice >= minValue;
+      const maxMatch = maxValue === null || !Number.isFinite(maxValue) || productPrice <= maxValue;
+      return categoryMatch && searchable.includes(query) && minMatch && maxMatch;
     });
     list.replaceChildren();
     if (!filtered.length) {
@@ -419,6 +445,13 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
     renderProducts();
   });
   search.addEventListener("input", renderProducts);
+  priceMin.addEventListener("input", renderProducts);
+  priceMax.addEventListener("input", renderProducts);
+  priceReset.addEventListener("click", () => {
+    priceMin.value = "";
+    priceMax.value = "";
+    renderProducts();
+  });
 
   function renderReviews() {
     const container = document.getElementById("reviews-list");
