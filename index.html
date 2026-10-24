@@ -40,6 +40,12 @@ h1 span{color:var(--gold2)}
 .btn-outline{border-color:#ffffff25;background:#ffffff06;color:#f3f3f3}
 .trust-row{display:flex;flex-wrap:wrap;gap:22px;margin:24px 0 58px;color:#9da2ad;font-size:12px}
 .trust-row span{display:flex;align-items:center;gap:8px}.trust-row b{color:var(--gold2);font-weight:700}
+.buyer-notice{display:flex;align-items:flex-start;gap:15px;margin:-28px 0 48px;padding:19px 21px;border:1px solid #e8c47770;border-radius:16px;background:linear-gradient(110deg,#211d14,#15140f);box-shadow:0 10px 30px #0002}
+.buyer-notice-icon{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#e8c477;color:#17140e;font-size:20px}
+.buyer-notice strong{display:block;margin:1px 0 6px;color:var(--gold2);font-size:14px}
+.buyer-notice p{margin:0;color:#c4c6cc;font-size:13px;line-height:1.65}
+@media(max-width:600px){.buyer-notice{margin:-25px 0 38px;padding:16px;gap:12px}.buyer-notice-icon{flex-basis:34px;width:34px;height:34px}}
+
 .catalog{padding:0 0 66px;scroll-margin-top:100px}
 .section-head{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:24px}
 .kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase}
@@ -133,6 +139,14 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
     <span><b>✦</b> Понятные цены</span>
     <span><b>✦</b> Связь с продавцом</span>
   </div>
+
+  <aside class="buyer-notice" aria-label="Важная информация для покупателей">
+    <div class="buyer-notice-icon" aria-hidden="true">📍</div>
+    <div>
+      <strong>Важно для покупателей</strong>
+      <p>Товары доступны только в с. Сростки. Перед покупкой уточняйте наличие и детали получения у продавца.</p>
+    </div>
+  </aside>
 
   <section class="catalog" id="catalog">
     <div class="section-head">
