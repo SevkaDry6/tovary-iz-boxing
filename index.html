@@ -26,6 +26,18 @@ header{position:sticky;top:0;z-index:20;background:#090a0de8;backdrop-filter:blu
 .nav-links a:hover{color:var(--gold2)}
 .nav-cta{border:1px solid #e8c47765;border-radius:999px;padding:11px 16px;color:var(--gold2)!important}
 .hero{position:relative;isolation:isolate;overflow:hidden;margin:18px 0 14px;min-height:0;padding:clamp(24px,4vw,42px);border:1px solid #e8c47738;border-radius:30px;background:linear-gradient(115deg,#191a1e 0%,#15130f 52%,#252014 100%)}
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);align-items:center;gap:clamp(22px,4vw,54px);padding:clamp(24px,3.5vw,42px)}
+.hero-copy{position:relative;z-index:1}
+.hero-glass{position:relative;isolation:isolate;overflow:hidden;min-height:230px;display:flex;flex-direction:column;justify-content:space-between;padding:25px;border:1px solid #ffffff25;border-radius:22px;background:linear-gradient(135deg,#ffffff14,#ffffff04 55%,#e8c47712);box-shadow:inset 0 1px #ffffff16,0 20px 55px #0003;backdrop-filter:blur(18px)}
+.hero-glass:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 80% 5%,#e8c47725,transparent 55%),linear-gradient(140deg,#ffffff08,transparent 60%)}
+.glass-orb{position:absolute;z-index:-1;right:-38px;top:30px;width:150px;height:150px;border:1px solid #f5dfa735;border-radius:50%;box-shadow:0 0 0 18px #e8c47708,0 0 0 38px #e8c47705}
+.glass-topline{display:flex;align-items:center;gap:9px;color:#d9dce2;font-size:10px;font-weight:800;letter-spacing:2px}
+.glass-dot{width:7px;height:7px;border-radius:50%;background:#e8c477;box-shadow:0 0 12px #e8c477a0}
+.glass-label{margin-top:30px;color:var(--gold2);font-size:9px;font-weight:800;letter-spacing:2px}
+.glass-title{margin-top:8px;font-size:clamp(24px,3vw,34px);font-weight:750;line-height:1.08;letter-spacing:-1px}
+.glass-divider{height:1px;margin:24px 0 14px;background:linear-gradient(90deg,#e8c47770,#ffffff12,transparent)}
+.glass-bottom{display:flex;justify-content:space-between;gap:10px;color:#a9adb7;font-size:9px;font-weight:750;letter-spacing:1.4px}
+@media(max-width:760px){.hero{grid-template-columns:1fr;gap:22px}.hero-glass{min-height:180px;padding:20px}.glass-label{margin-top:18px}.glass-divider{margin:17px 0 12px}}
 .hero:before{content:"";position:absolute;z-index:-1;width:420px;height:420px;right:-100px;top:-170px;border-radius:50%;background:radial-gradient(circle,#e8c47725 0,transparent 68%)}
 .hero:after{content:"BOXING";position:absolute;z-index:-1;right:-15px;bottom:-40px;font-size:clamp(70px,14vw,175px);font-weight:950;letter-spacing:-.09em;color:#ffffff06;white-space:nowrap}
 .eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--gold2);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
@@ -144,12 +156,22 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 </header>
 <main class="container">
   <section class="hero">
-    <div class="eyebrow">Магазин интересных находок</div>
-    <h1>Хорошие вещи.<br><span>Честные цены.</span></h1>
-    <p>Выбирай то, что нравится. Мы собираем интересные товары в одном месте — без лишнего шума, с понятными описаниями и ценами.</p>
-    <div class="hero-actions">
-      <a class="btn btn-gold" href="#catalog">Перейти в каталог <span>↘</span></a>
-      <a class="btn btn-outline" href="#about">О магазине</a>
+    <div class="hero-copy">
+      <div class="eyebrow">Магазин интересных находок</div>
+      <h1>Хорошие вещи.<br><span>Честные цены.</span></h1>
+      <p>Выбирай то, что нравится. Интересные товары в одном месте — с понятными описаниями и ценами.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="#catalog">Перейти в каталог <span>↘</span></a>
+        <a class="btn btn-outline" href="#about">О магазине</a>
+      </div>
+    </div>
+    <div class="hero-glass" aria-label="Преимущества магазина">
+      <div class="glass-orb" aria-hidden="true"></div>
+      <div class="glass-topline"><span class="glass-dot"></span> BOXING SELECT</div>
+      <div class="glass-label">ТВОЯ СЛЕДУЮЩАЯ НАХОДКА</div>
+      <div class="glass-title">Выбирай<br>с удовольствием.</div>
+      <div class="glass-divider"></div>
+      <div class="glass-bottom"><span>КАТАЛОГ</span><span>СРОСТКИ · RU</span></div>
     </div>
   </section>
   <div class="trust-row" aria-label="Преимущества">
