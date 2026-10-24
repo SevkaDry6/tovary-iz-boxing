@@ -1,591 +1,309 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Товары из Boxing — Магазин</title>
-<meta name="description" content="Красивые товары по доступным ценам. Выбирай и заказывай!">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0c10">
+<title>Товары из Boxing — магазин</title>
+<meta name="description" content="Товары из Boxing — стильный каталог находок по приятным ценам.">
 <style>
-:root {
-  --bg: #f6f7fb;
-  --card: #ffffff;
-  --text: #202235;
-  --muted: #777b90;
-  --accent: #7456f5;
-  --accent2: #977fff;
-  --line: #ececf3;
-  --radius: 22px;
+:root{
+  color-scheme:dark;--bg:#090a0d;--surface:#111318;--surface2:#171a21;
+  --text:#f4f5f7;--muted:#9298a5;--line:#282c35;--gold:#e8c477;
+  --gold2:#f5dfa7;--radius:22px;--max:1220px
 }
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Inter, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Arial, sans-serif;
-}
-button, input, select { font: inherit; }
-button { cursor: pointer; }
-a { color: inherit; text-decoration: none; }
-.container { width: min(1180px, 92%); margin: auto; }
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: rgba(255,255,255,.9);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--line);
-}
-.nav {
-  min-height: 76px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  font-size: 19px;
-  font-weight: 850;
-  letter-spacing: -.6px;
-}
-.logo-icon {
-  width: 43px;
-  height: 43px;
-  border-radius: 15px;
-  display: grid;
-  place-items: center;
-  color: white;
-  background: linear-gradient(135deg, var(--accent), #b39cff);
-  box-shadow: 0 6px 18px #7456f533;
-  font-size: 23px;
-}
-.logo small {
-  display: block;
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-}
-.nav-link { color: var(--muted); font-size: 14px; }
-.nav-link:hover { color: var(--accent); }
-
-.hero {
-  margin-top: 32px;
-  padding: 48px;
-  min-height: 300px;
-  overflow: hidden;
-  position: relative;
-  border-radius: 30px;
-  color: white;
-  background:
-    radial-gradient(circle at 85% 10%, #c1b0ff 0, transparent 28%),
-    radial-gradient(circle at 95% 100%, #4c34ba 0, transparent 40%),
-    linear-gradient(120deg, #211747, #6546d7);
-}
-.hero::after {
-  content: "BOXING";
-  position: absolute;
-  right: -12px;
-  bottom: -35px;
-  font-size: clamp(70px, 13vw, 170px);
-  font-weight: 950;
-  letter-spacing: -9px;
-  color: #ffffff0c;
-  pointer-events: none;
-}
-.eyebrow {
-  display: inline-flex;
-  padding: 8px 13px;
-  border: 1px solid #ffffff38;
-  border-radius: 30px;
-  background: #ffffff12;
-  font-size: 12px;
-  font-weight: 700;
-}
-.hero h1 {
-  position: relative;
-  z-index: 1;
-  max-width: 620px;
-  margin: 20px 0 12px;
-  font-size: clamp(32px, 5vw, 52px);
-  line-height: 1.08;
-  letter-spacing: -2px;
-}
-.hero p {
-  position: relative;
-  z-index: 1;
-  max-width: 480px;
-  color: #e0dafa;
-  line-height: 1.7;
-  font-size: 15px;
-}
-.hero-btn {
-  position: relative;
-  z-index: 1;
-  display: inline-block;
-  margin-top: 12px;
-  padding: 14px 22px;
-  border-radius: 13px;
-  background: white;
-  color: #4930b3;
-  font-size: 14px;
-  font-weight: 800;
-  transition: transform .2s;
-}
-.hero-btn:hover { transform: translateY(-3px); }
-
-.benefits {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin: 22px 0 42px;
-}
-.benefit {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-}
-.benefit-icon {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  background: #f0edff;
-  border-radius: 14px;
-  font-size: 20px;
-}
-.benefit strong { display: block; font-size: 13px; }
-.benefit span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
-
-.section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 16px;
-  margin-bottom: 22px;
-}
-.section-head h2 {
-  margin: 0;
-  font-size: clamp(25px, 4vw, 34px);
-  letter-spacing: -1px;
-}
-.section-head p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
-
-.search {
-  width: min(290px, 100%);
-  padding: 13px 16px;
-  outline: none;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-}
-.search:focus { border-color: var(--accent); }
-
-.categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  margin-bottom: 22px;
-}
-.category {
-  padding: 10px 16px;
-  border: 1px solid var(--line);
-  border-radius: 30px;
-  background: white;
-  color: #60647a;
-  font-size: 13px;
-  transition: .2s;
-}
-.category:hover, .category.active {
-  color: white;
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.products {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
-}
-.product {
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid #eeeef5;
-  border-radius: var(--radius);
-  background: var(--card);
-  box-shadow: 0 5px 22px #27204406;
-  transition: transform .25s, box-shadow .25s;
-}
-.product:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px #27204412;
-}
-.product-image {
-  position: relative;
-  aspect-ratio: 4 / 4.1;
-  overflow: hidden;
-  background: #efedf7;
-}
-.product-image img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  transition: transform .4s;
-}
-.product:hover .product-image img { transform: scale(1.05); }
-.tag {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 7px 10px;
-  border-radius: 9px;
-  background: #ffffffeb;
-  color: #5942c6;
-  font-size: 10px;
-  font-weight: 800;
-}
-.product-info { padding: 16px; }
-.product-category {
-  color: var(--muted);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: .8px;
-}
-.product h3 {
-  margin: 9px 0 7px;
-  font-size: 16px;
-  line-height: 1.4;
-}
-.product-desc {
-  min-height: 35px;
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
-.product-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 16px;
-}
-.price { font-size: 20px; font-weight: 850; letter-spacing: -.5px; }
-.buy {
-  border: 0;
-  padding: 10px 12px;
-  border-radius: 11px;
-  background: var(--accent);
-  color: white;
-  font-size: 12px;
-  font-weight: 750;
-  transition: background .2s;
-}
-.buy:hover { background: #5a3bd6; }
-.empty {
-  grid-column: 1 / -1;
-  padding: 55px 20px;
-  text-align: center;
-  border-radius: 20px;
-  background: white;
-  color: var(--muted);
-}
-
-.contact {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  margin: 65px 0 35px;
-  padding: 32px;
-  border-radius: 25px;
-  background: #ece8ff;
-}
-.contact h2 { margin: 0 0 9px; font-size: 25px; }
-.contact p { margin: 0; color: #6e6887; font-size: 14px; line-height: 1.6; }
-.contact a {
-  flex-shrink: 0;
-  padding: 14px 20px;
-  border-radius: 13px;
-  background: var(--accent);
-  color: white;
-  font-weight: 750;
-  font-size: 13px;
-}
-footer {
-  padding: 24px 0 32px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 12px;
-}
-.footer-inner {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 900px) {
-  .products { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .hero { padding: 36px; }
-}
-@media (max-width: 620px) {
-  .nav { min-height: 65px; }
-  .nav-link { display: none; }
-  .logo { font-size: 16px; }
-  .hero { margin-top: 18px; padding: 27px 22px; min-height: 300px; }
-  .hero h1 { letter-spacing: -1px; }
-  .benefits { grid-template-columns: 1fr; gap: 9px; margin-bottom: 34px; }
-  .benefit { padding: 13px; }
-  .section-head { align-items: stretch; flex-direction: column; }
-  .search { width: 100%; }
-  .products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
-  .product-info { padding: 11px; }
-  .product h3 { font-size: 14px; }
-  .product-desc { font-size: 11px; }
-  .price { font-size: 17px; }
-  .buy { padding: 9px 8px; font-size: 11px; }
-  .product-bottom { align-items: start; flex-direction: column; }
-  .buy { width: 100%; }
-  .contact { align-items: stretch; flex-direction: column; padding: 23px; margin-top: 45px; }
-  .contact a { text-align: center; }
-}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 50% -20%,#29251a 0,transparent 42%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+button,input{font:inherit}button,a{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:inherit;text-decoration:none}
+.container{width:min(var(--max),calc(100% - 40px));margin:auto}
+header{position:sticky;top:0;z-index:20;background:#090a0de8;backdrop-filter:blur(18px);border-bottom:1px solid #ffffff0d}
+.nav{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:22px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.5px}
+.brand-mark{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;color:#14120c;background:linear-gradient(135deg,var(--gold2),#b78d3e);font-size:20px;font-weight:950;box-shadow:0 5px 24px #e8c47720}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;font-weight:650;margin-top:4px}
+.nav-links{display:flex;align-items:center;gap:28px;color:#b6bac3;font-size:13px}
+.nav-links a:hover{color:var(--gold2)}
+.nav-cta{border:1px solid #e8c47765;border-radius:999px;padding:11px 16px;color:var(--gold2)!important}
+.hero{position:relative;isolation:isolate;overflow:hidden;margin:34px 0 26px;min-height:370px;padding:clamp(28px,6vw,70px);border:1px solid #e8c47738;border-radius:30px;background:linear-gradient(115deg,#191a1e 0%,#15130f 52%,#252014 100%)}
+.hero:before{content:"";position:absolute;z-index:-1;width:420px;height:420px;right:-100px;top:-170px;border-radius:50%;background:radial-gradient(circle,#e8c47725 0,transparent 68%)}
+.hero:after{content:"BOXING";position:absolute;z-index:-1;right:-15px;bottom:-40px;font-size:clamp(70px,14vw,175px);font-weight:950;letter-spacing:-.09em;color:#ffffff06;white-space:nowrap}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--gold2);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.eyebrow:before{content:"";width:24px;height:1px;background:var(--gold)}
+h1{max-width:720px;margin:22px 0 15px;font-size:clamp(38px,6vw,68px);line-height:1.03;letter-spacing:-.055em}
+h1 span{color:var(--gold2)}
+.hero p{max-width:510px;color:#a9adb7;line-height:1.8;font-size:15px;margin:0}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:27px}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:10px;border-radius:12px;padding:14px 19px;border:1px solid transparent;font-weight:750;font-size:13px;transition:transform .2s,border-color .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn-gold{background:linear-gradient(135deg,var(--gold2),#c49b4d);color:#17140e}
+.btn-outline{border-color:#ffffff25;background:#ffffff06;color:#f3f3f3}
+.trust-row{display:flex;flex-wrap:wrap;gap:22px;margin:24px 0 58px;color:#9da2ad;font-size:12px}
+.trust-row span{display:flex;align-items:center;gap:8px}.trust-row b{color:var(--gold2);font-weight:700}
+.catalog{padding:0 0 66px;scroll-margin-top:100px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:24px}
+.kicker{color:var(--gold);font-size:10px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase}
+h2{margin:8px 0 0;font-size:clamp(27px,4vw,39px);letter-spacing:-.04em}
+.section-sub{margin:9px 0 0;color:var(--muted);font-size:13px}
+.search-wrap{width:min(330px,100%);position:relative}
+.search-wrap:before{content:"⌕";position:absolute;left:15px;top:8px;font-size:24px;color:#9ca1ad}
+.search{width:100%;padding:14px 15px 14px 43px;background:#111318;border:1px solid var(--line);border-radius:13px;color:var(--text);outline:none}
+.search:focus{border-color:#c6a35d}
+.categories{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.category{border:1px solid var(--line);border-radius:999px;background:#111318;color:#aeb3bd;padding:10px 15px;font-size:12px;transition:.2s}
+.category:hover,.category.active{border-color:#b9954f;background:#e8c477;color:#17140e}
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.product{min-width:0;overflow:hidden;border:1px solid #ffffff12;border-radius:19px;background:linear-gradient(160deg,#17191f,#101115);transition:transform .25s,border-color .25s,box-shadow .25s}
+.product:hover{transform:translateY(-5px);border-color:#e8c47755;box-shadow:0 20px 50px #0007}
+.product-image{position:relative;aspect-ratio:4/4.4;background:#191b21;overflow:hidden}
+.product-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s}
+.product:hover .product-image img{transform:scale(1.045)}
+.no-photo{width:100%;height:100%;display:grid;place-items:center;color:#656b77;font-size:12px;letter-spacing:1px;text-transform:uppercase;background:radial-gradient(circle at 50% 40%,#272a31,#14161b 65%)}
+.tag{position:absolute;top:12px;left:12px;border:1px solid #e8c47755;border-radius:7px;padding:7px 9px;background:#0b0c10d9;color:var(--gold2);font-size:9px;font-weight:800;letter-spacing:1px}
+.product-info{padding:16px}
+.product-category{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
+.product h3{margin:9px 0 7px;font-size:16px;line-height:1.35}
+.product-desc{margin:0;min-height:34px;color:#989eaa;font-size:12px;line-height:1.65;overflow-wrap:anywhere}
+.product-size{margin-top:8px;color:#b7bbc4;font-size:11px}
+.product-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:17px;padding-top:14px;border-top:1px solid #ffffff10}
+.price{font-size:20px;font-weight:850;letter-spacing:-.6px;white-space:nowrap}
+.buy{border:1px solid #e8c47765;border-radius:10px;background:#e8c477;color:#17140e;padding:10px 12px;font-size:11px;font-weight:850;white-space:nowrap}
+.buy:hover{background:var(--gold2)}
+.state{grid-column:1/-1;border:1px dashed #393d46;border-radius:20px;padding:52px 20px;text-align:center;background:#111318;color:var(--muted)}
+.state strong{display:block;color:#f0f1f3;font-size:17px;margin-bottom:8px}
+.state p{max-width:480px;margin:0 auto;line-height:1.7;font-size:13px}
+.state.error strong{color:#ffb1a8}
+.bottom-banner{display:flex;align-items:center;justify-content:space-between;gap:25px;margin:0 0 50px;padding:28px 30px;border:1px solid #e8c47730;border-radius:22px;background:linear-gradient(110deg,#191a1f,#211d14)}
+.bottom-banner h2{font-size:23px;margin:0 0 8px}.bottom-banner p{color:var(--muted);font-size:13px;line-height:1.7;margin:0}
+footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-size:11px}
+.footer-inner{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+@media(max-width:950px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}.nav-links{gap:15px}}
+@media(max-width:680px){.container{width:min(var(--max),calc(100% - 26px))}.nav{min-height:67px}.brand{font-size:14px}.brand-mark{width:38px;height:38px}.nav-links a:not(.nav-cta){display:none}.nav-cta{padding:10px 12px;font-size:11px}.hero{margin-top:18px;padding:30px 23px;min-height:360px;border-radius:23px}.hero p{font-size:13px}.trust-row{gap:12px;margin:20px 0 44px}.section-head{align-items:stretch;flex-direction:column}.search-wrap{width:100%}.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.product-info{padding:11px}.product h3{font-size:13px}.product-desc{font-size:11px}.product-bottom{align-items:flex-start;flex-direction:column}.price{font-size:17px}.buy{width:100%;padding:10px 6px}.product-size{font-size:10px}.bottom-banner{align-items:stretch;flex-direction:column;padding:23px}.bottom-banner .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
-
 <body>
 <header>
   <div class="container nav">
-    <a class="logo" href="#">
-      <span class="logo-icon">B</span>
-      <span>Товары из Boxing<small>МАГАЗИН ТВОИХ НАХОДОК</small></span>
+    <a class="brand" href="#" aria-label="Товары из Boxing — главная">
+      <span class="brand-mark">B</span>
+      <span>Товары из Boxing<small>SELECTED FINDS · ONLINE STORE</small></span>
     </a>
-    <a class="nav-link" href="#products">Каталог товаров ↓</a>
-    <a class="nav-link" href="#contacts">Связаться с нами ↗</a>
+    <nav class="nav-links" aria-label="Основная навигация">
+      <a href="#catalog">Каталог</a>
+      <a href="#about">О магазине</a>
+      <a class="nav-cta" href="#catalog">Смотреть товары ↗</a>
+    </nav>
   </div>
 </header>
-
 <main class="container">
   <section class="hero">
-    <span class="eyebrow">✦ ДОБРО ПОЖАЛОВАТЬ В МАГАЗИН</span>
-    <h1>Находи своё.<br>Покупай с удовольствием.</h1>
-    <p>Интересные товары, приятные цены и новые находки.
-       Выбирай то, что нравится!</p>
-    <a class="hero-btn" href="#products">Смотреть товары&nbsp; →</a>
-  </section>
-
-  <section class="benefits" aria-label="Преимущества">
-    <div class="benefit">
-      <div class="benefit-icon">💜</div>
-      <div><strong>На любой вкус</strong><span>Разные товары в одном месте</span></div>
-    </div>
-    <div class="benefit">
-      <div class="benefit-icon">🏷️</div>
-      <div><strong>Доступные цены</strong><span>Стоимость указана в карточках</span></div>
-    </div>
-    <div class="benefit">
-      <div class="benefit-icon">💬</div>
-      <div><strong>Легко связаться</strong><span>Уточняй наличие у продавца</span></div>
+    <div class="eyebrow">Магазин интересных находок</div>
+    <h1>Хорошие вещи.<br><span>Честные цены.</span></h1>
+    <p>Выбирай то, что нравится. Мы собираем интересные товары в одном месте — без лишнего шума, с понятными описаниями и ценами.</p>
+    <div class="hero-actions">
+      <a class="btn btn-gold" href="#catalog">Перейти в каталог <span>↘</span></a>
+      <a class="btn btn-outline" href="#about">О магазине</a>
     </div>
   </section>
+  <div class="trust-row" aria-label="Преимущества">
+    <span><b>✦</b> Новые находки</span>
+    <span><b>✦</b> Понятные цены</span>
+    <span><b>✦</b> Связь с продавцом</span>
+  </div>
 
-  <section id="products">
+  <section class="catalog" id="catalog">
     <div class="section-head">
       <div>
-        <h2>Наши товары</h2>
-        <p>Выбирай понравившиеся вещи</p>
+        <div class="kicker">Коллекция магазина</div>
+        <h2>Каталог товаров</h2>
+        <p class="section-sub" id="catalog-note">Товары, которые ты добавишь через админку</p>
       </div>
-      <input id="search" class="search" type="search"
-        placeholder="🔎  Найти товар..." aria-label="Поиск товаров">
+      <label class="search-wrap">
+        <input id="search" class="search" type="search" placeholder="Поиск по каталогу…" aria-label="Поиск товаров">
+      </label>
     </div>
-
     <div class="categories" id="categories">
-      <button class="category active" data-category="Все">Все товары</button>
-      <button class="category" data-category="Одежда">Одежда</button>
-      <button class="category" data-category="Обувь">Обувь</button>
-      <button class="category" data-category="Аксессуары">Аксессуары</button>
-      <button class="category" data-category="Дом">Для дома</button>
+      <button class="category active" type="button" data-category="Все">Все товары</button>
     </div>
-
-    <div class="products" id="product-list"></div>
+    <div class="products" id="product-list" aria-live="polite">
+      <div class="state"><strong>Загружаем каталог…</strong><p>Секунду, проверяем новые товары.</p></div>
+    </div>
   </section>
 
-  <section class="contact" id="contacts">
+  <section class="bottom-banner" id="about">
     <div>
-      <h2>Есть вопросы?</h2>
-      <p>Напиши продавцу, чтобы узнать о наличии товара,<br>
-         доставке и способах оплаты.</p>
+      <h2>Нашёл что-то интересное?</h2>
+      <p>Открой карточку товара и свяжись с продавцом, чтобы уточнить наличие и детали.</p>
     </div>
-    <!-- ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЙ TELEGRAM -->
-    <a href="https://t.me/" target="_blank" rel="noopener">
-      Написать продавцу ↗
-    </a>
+    <a class="btn btn-gold" href="#catalog">Открыть каталог ↗</a>
   </section>
 </main>
-
 <footer>
   <div class="container footer-inner">
     <span>© <span id="year"></span> Товары из Boxing</span>
-    <span>Выбирай с удовольствием 💜</span>
+    <span>Тёмный стиль. Только твои товары.</span>
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// РЕДАКТИРУЙ ТОВАРЫ ЗДЕСЬ: название, цену, категорию и фотографию.
-const products = [
-  {
-    name: "Стильное платье",
-    category: "Одежда",
-    price: 500,
-    description: "Красивый образ на каждый день.",
-    image: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=700&q=80",
-    tag: "ПОПУЛЯРНОЕ"
-  },
-  {
-    name: "Кроссовки",
-    category: "Обувь",
-    price: 800,
-    description: "Удобная обувь для прогулок.",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80",
-    tag: "НАХОДКА"
-  },
-  {
-    name: "Сумка на каждый день",
-    category: "Аксессуары",
-    price: 350,
-    description: "Практичный аксессуар для образа.",
-    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=700&q=80",
-    tag: "НОВИНКА"
-  },
-  {
-    name: "Уютная чашка",
-    category: "Дом",
-    price: 150,
-    description: "Для любимого утреннего напитка.",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=700&q=80",
-    tag: "ДЛЯ ДОМА"
-  },
-  {
-    name: "Повседневная футболка",
-    category: "Одежда",
-    price: 250,
-    description: "Базовая вещь для твоего гардероба.",
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=700&q=80",
-    tag: "БАЗА"
-  },
-  {
-    name: "Стильные очки",
-    category: "Аксессуары",
-    price: 200,
-    description: "Заверши свой образ красивой деталью.",
-    image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=700&q=80",
-    tag: "СТИЛЬ"
-  },
-  {
-    name: "Кеды",
-    category: "Обувь",
-    price: 600,
-    description: "Универсальный вариант на каждый день.",
-    image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=700&q=80",
-    tag: "НАХОДКА"
-  },
-  {
-    name: "Декор для комнаты",
-    category: "Дом",
-    price: 300,
-    description: "Добавь уют в своё пространство.",
-    image: "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=700&q=80",
-    tag: "УЮТ"
+(() => {
+  "use strict";
+  const SUPABASE_URL = "https://vltyoaukpghgknwszzwf.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_031wgOOIxZOZkwwnY9jlyg_SZZlRMDr";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const list = document.getElementById("product-list");
+  const search = document.getElementById("search");
+  const categories = document.getElementById("categories");
+  let products = [];
+  let activeCategory = "Все";
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  function safeText(value) {
+    return String(value ?? "");
   }
-];
+  function money(value) {
+    return Number(value || 0).toLocaleString("ru-RU", {maximumFractionDigits: 2}) + " ₽";
+  }
+  function showState(title, detail, isError = false) {
+    list.replaceChildren();
+    const box = document.createElement("div");
+    box.className = "state" + (isError ? " error" : "");
+    const heading = document.createElement("strong");
+    heading.textContent = title;
+    const paragraph = document.createElement("p");
+    paragraph.textContent = detail;
+    box.append(heading, paragraph);
+    list.appendChild(box);
+  }
+  function makeCategoryButtons() {
+    const names = ["Все", ...new Set(products.map(p => safeText(p.category).trim()).filter(Boolean))];
+    categories.replaceChildren();
+    names.forEach(name => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "category" + (name === activeCategory ? " active" : "");
+      button.dataset.category = name;
+      button.textContent = name === "Все" ? "Все товары" : name;
+      categories.appendChild(button);
+    });
+    if (!names.includes(activeCategory)) activeCategory = "Все";
+    categories.querySelectorAll("button").forEach(button => {
+      button.classList.toggle("active", button.dataset.category === activeCategory);
+    });
+  }
+  function renderProducts() {
+    const query = search.value.trim().toLocaleLowerCase("ru-RU");
+    const filtered = products.filter(product => {
+      const categoryMatch = activeCategory === "Все" || safeText(product.category).trim() === activeCategory;
+      const searchable = [product.name, product.description, product.category, product.size].map(safeText).join(" ").toLocaleLowerCase("ru-RU");
+      return categoryMatch && searchable.includes(query);
+    });
+    list.replaceChildren();
+    if (!filtered.length) {
+      if (!products.length) {
+        showState("Пока товаров нет", "Зайди в админку и добавь первый товар. Он появится здесь автоматически.");
+      } else {
+        showState("Ничего не найдено", "Попробуй изменить запрос или выбрать другую категорию.");
+      }
+      return;
+    }
+    filtered.forEach(product => {
+      const card = document.createElement("article");
+      card.className = "product";
+      const imageWrap = document.createElement("div");
+      imageWrap.className = "product-image";
+      if (product.image_url) {
+        const img = document.createElement("img");
+        img.src = product.image_url;
+        img.alt = safeText(product.name) || "Фото товара";
+        img.loading = "lazy";
+        img.onerror = () => {
+          const placeholder = document.createElement("div");
+          placeholder.className = "no-photo";
+          placeholder.textContent = "Фото товара";
+          imageWrap.replaceChildren(placeholder);
+        };
+        imageWrap.appendChild(img);
+      } else {
+        const placeholder = document.createElement("div");
+        placeholder.className = "no-photo";
+        placeholder.textContent = "Фото товара";
+        imageWrap.appendChild(placeholder);
+      }
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = "В НАЛИЧИИ";
+      imageWrap.appendChild(tag);
 
-let activeCategory = "Все";
-const list = document.getElementById("product-list");
-const search = document.getElementById("search");
-
-function renderProducts() {
-  const query = search.value.trim().toLowerCase();
-
-  const filtered = products.filter(product => {
-    const matchesCategory = activeCategory === "Все" ||
-      product.category === activeCategory;
-    const matchesSearch =
-      (product.name + " " + product.description + " " +
-       product.category).toLowerCase().includes(query);
-    return matchesCategory && matchesSearch;
+      const info = document.createElement("div");
+      info.className = "product-info";
+      const category = document.createElement("div");
+      category.className = "product-category";
+      category.textContent = safeText(product.category) || "Без категории";
+      const title = document.createElement("h3");
+      title.textContent = safeText(product.name) || "Без названия";
+      const desc = document.createElement("p");
+      desc.className = "product-desc";
+      desc.textContent = safeText(product.description) || "Подробности можно уточнить у продавца.";
+      info.append(category, title, desc);
+      if (product.size) {
+        const size = document.createElement("div");
+        size.className = "product-size";
+        size.textContent = "Размер: " + safeText(product.size);
+        info.appendChild(size);
+      }
+      const bottom = document.createElement("div");
+      bottom.className = "product-bottom";
+      const price = document.createElement("span");
+      price.className = "price";
+      price.textContent = money(product.price);
+      const buy = document.createElement("button");
+      buy.type = "button";
+      buy.className = "buy";
+      buy.textContent = "Написать в MAX ↗";
+      buy.setAttribute("aria-label", "Написать продавцу в MAX о товаре " + safeText(product.name));
+      buy.addEventListener("click", () => {
+        window.open("https://max.ru/u/f9LHodD0cOIAodaIAJ2qZbJ5KEaoyZ4JLZZicj-DRIgEfDW0oN_xFXRcRgw", "_blank", "noopener,noreferrer");
+      });
+      bottom.append(price, buy);
+      info.appendChild(bottom);
+      card.append(imageWrap, info);
+      list.appendChild(card);
+    });
+  }
+  categories.addEventListener("click", event => {
+    const button = event.target.closest("button[data-category]");
+    if (!button) return;
+    activeCategory = button.dataset.category;
+    categories.querySelectorAll(".category").forEach(item => item.classList.toggle("active", item === button));
+    renderProducts();
   });
+  search.addEventListener("input", renderProducts);
 
-  if (!filtered.length) {
-    list.innerHTML = '<div class="empty">😔 Ничего не найдено. Попробуй другой запрос.</div>';
-    return;
+  async function loadProducts() {
+    showState("Загружаем каталог…", "Подключаемся к магазину.");
+    try {
+      const {data, error} = await client
+        .from("store_products")
+        .select("id,name,price,category,description,size,image_url,active,created_at")
+        .eq("active", true)
+        .order("created_at", {ascending: false});
+      if (error) throw error;
+      products = data || [];
+      makeCategoryButtons();
+      renderProducts();
+      document.getElementById("catalog-note").textContent =
+        products.length ? products.length + (products.length === 1 ? " товар в каталоге" : " товара в каталоге") : "Добавляй товары через админку — они появятся здесь";
+    } catch (error) {
+      console.error("Catalog load error:", error);
+      showState("Не удалось загрузить товары", "Проверь подключение к Supabase и публичный доступ SELECT к активным товарам в таблице store_products.", true);
+    }
   }
-
-  list.innerHTML = filtered.map(product => `
-    <article class="product">
-      <div class="product-image">
-        <img src="${product.image}" alt="${product.name}" loading="lazy">
-        <span class="tag">${product.tag}</span>
-      </div>
-      <div class="product-info">
-        <div class="product-category">${product.category}</div>
-        <h3>${product.name}</h3>
-        <p class="product-desc">${product.description}</p>
-        <div class="product-bottom">
-          <span class="price">${product.price.toLocaleString("ru-RU")} ₽</span>
-          <button class="buy" data-product="${product.name}">
-            Узнать о товаре
-          </button>
-        </div>
-      </div>
-    </article>
-  `).join("");
-}
-
-document.getElementById("categories").addEventListener("click", event => {
-  const button = event.target.closest("button[data-category]");
-  if (!button) return;
-
-  activeCategory = button.dataset.category;
-  document.querySelectorAll(".category").forEach(item => {
-    item.classList.toggle("active", item === button);
-  });
-  renderProducts();
-});
-
-search.addEventListener("input", renderProducts);
-
-list.addEventListener("click", event => {
-  const button = event.target.closest("button[data-product]");
-  if (!button) return;
-
-  const message = "Здравствуйте! Меня интересует товар: " +
-    button.dataset.product;
-  const telegram = "https://t.me/";
-
-  if (telegram === "https://t.me/") {
-    alert(message + "\n\nДобавьте свой Telegram в ссылку продавца на сайте.");
-    return;
-  }
-
-  window.open(telegram, "_blank", "noopener");
-});
-
-document.getElementById("year").textContent = new Date().getFullYear();
-renderProducts();
+  loadProducts();
+})();
 </script>
 </body>
 </html>
