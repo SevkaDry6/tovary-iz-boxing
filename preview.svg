@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-<defs>
- <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#080b0a"/><stop offset=".55" stop-color="#111b17"/><stop offset="1" stop-color="#07110d"/></linearGradient>
- <linearGradient id="green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a7f3d0"/><stop offset="1" stop-color="#059669"/></linearGradient>
- <radialGradient id="glow"><stop stop-color="#10b981" stop-opacity=".28"/><stop offset="1" stop-color="#10b981" stop-opacity="0"/></radialGradient>
-</defs>
-<rect width="1200" height="630" fill="url(#bg)"/>
-<circle cx="1040" cy="90" r="370" fill="url(#glow)"/><circle cx="1040" cy="90" r="230" fill="none" stroke="#34d399" stroke-opacity=".12" stroke-width="2"/><circle cx="1040" cy="90" r="270" fill="none" stroke="#34d399" stroke-opacity=".08" stroke-width="2"/>
-<path d="M0 530 L1200 330" stroke="#34d399" stroke-opacity=".08" stroke-width="1"/><path d="M0 580 L1200 380" stroke="#34d399" stroke-opacity=".06" stroke-width="1"/>
-<rect x="72" y="72" width="66" height="66" rx="19" fill="url(#green)"/><text x="105" y="116" font-family="Arial,sans-serif" font-size="32" font-weight="900" fill="#07110d" text-anchor="middle">B</text>
-<text x="160" y="99" font-family="Arial,sans-serif" font-size="18" font-weight="700" letter-spacing="5" fill="#a7f3d0">ОНЛАЙН-МАГАЗИН</text>
-<text x="72" y="270" font-family="Arial,sans-serif" font-size="70" font-weight="800" letter-spacing="-2" fill="#f4f5f7">Товары из Boxing</text>
-<text x="76" y="333" font-family="Arial,sans-serif" font-size="29" fill="#a7f3d0">Интересные находки. Приятные цены.</text>
-<text x="76" y="390" font-family="Arial,sans-serif" font-size="23" fill="#a5ada8">Одежда · Обувь · Аксессуары · Для дома</text>
-<rect x="76" y="455" width="260" height="58" rx="29" fill="url(#green)"/><text x="206" y="492" font-family="Arial,sans-serif" font-size="20" font-weight="800" fill="#07110d" text-anchor="middle">СМОТРЕТЬ КАТАЛОГ ↗</text>
-<text x="1125" y="574" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="3" fill="#34d399" text-anchor="end">BOXING • SHOP</text>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050706"/><stop offset="1" stop-color="#101713"/></linearGradient><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a7f3d0"/><stop offset="1" stop-color="#00d95f"/></linearGradient><pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#7cffb0" stroke-opacity=".045"/></pattern></defs>
+<rect width="1200" height="630" fill="url(#bg)"/><rect width="1200" height="630" fill="url(#grid)"/>
+<path d="M0 0H370L0 155Z" fill="#00e65f" opacity=".10"/><path d="M1200 630H880L1200 490Z" fill="#00e65f" opacity=".10"/>
+<circle cx="100" cy="110" r="115" fill="none" stroke="#00e65f" stroke-opacity=".14" stroke-width="2"/><circle cx="100" cy="110" r="88" fill="none" stroke="#00e65f" stroke-opacity=".08" stroke-width="14"/>
+<g transform="translate(1000 110)" fill="none" stroke="#00e65f" stroke-opacity=".22" stroke-width="5"><path d="M-55 -32H-25L-5 35H48L65 -12H-13"/><circle cx="4" cy="55" r="6"/><circle cx="45" cy="55" r="6"/></g>
+<g transform="translate(1060 500)" fill="none" stroke="#00e65f" stroke-opacity=".15" stroke-width="3"><rect x="-65" y="-50" width="130" height="100" rx="10"/><path d="M-65 -18H65M0 -50V50"/></g>
+<path d="M290 155L910 155" stroke="#00e65f" stroke-opacity=".6" stroke-width="2"/>
+<text x="600" y="220" text-anchor="middle" fill="#f4f7f5" font-family="Arial,sans-serif" font-size="70" font-weight="800" letter-spacing="1">Товары из</text>
+<text x="600" y="325" text-anchor="middle" fill="url(#g)" font-family="Arial,sans-serif" font-size="112" font-weight="900" letter-spacing="1">Boxing</text>
+<path d="M380 350Q600 370 820 350" fill="none" stroke="#00e65f" stroke-width="5" stroke-linecap="round"/>
+<text x="600" y="405" text-anchor="middle" fill="#cbd5cf" font-family="Arial,sans-serif" font-size="23" letter-spacing="7">ИНТЕРНЕТ-МАГАЗИН</text>
+<g font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#e7eee9" text-anchor="middle"><text x="350" y="495">ВЫГОДНЫЕ ЦЕНЫ</text><text x="600" y="495">ИНТЕРЕСНЫЕ НАХОДКИ</text><text x="850" y="495">ДЛЯ КАЖДОГО</text></g>
+<g stroke="#00e65f" stroke-width="3" fill="none"><path d="M280 470l10 10 19-23"/><path d="M515 475h28l-4 15h-24zM520 490v7M536 490v7"/><path d="M820 477c-13-18-32 2 0 24 32-22 13-42 0-24z"/></g>
+<rect x="470" y="540" width="260" height="4" rx="2" fill="#00e65f" opacity=".8"/>
+<text x="600" y="585" text-anchor="middle" fill="#7f9187" font-family="Arial,sans-serif" font-size="15" letter-spacing="4">НАХОДИ СВОЁ</text>
 </svg>
