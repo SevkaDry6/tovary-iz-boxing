@@ -400,7 +400,12 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       }
       const tag = document.createElement("span");
       tag.className = "tag";
-      tag.textContent = "В НАЛИЧИИ";
+      tag.textContent = product.sold ? "ПРОДАНО" : "В НАЛИЧИИ";
+      if (product.sold) {
+        tag.style.background = "#8d2929e8";
+        tag.style.borderColor = "#ff777788";
+        tag.style.color = "#fff";
+      }
       imageWrap.appendChild(tag);
 
       const info = document.createElement("div");
@@ -514,11 +519,19 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       const buy = document.createElement("button");
       buy.type = "button";
       buy.className = "buy";
-      buy.textContent = "Написать в MAX ↗";
-      buy.setAttribute("aria-label", "Написать продавцу в MAX о товаре " + safeText(product.name));
-      buy.addEventListener("click", () => {
-        window.open("https://max.ru/u/f9LHodD0cOIAodaIAJ2qZbJ5KEaoyZ4JLZZicj-DRIgEfDW0oN_xFXRcRgw", "_blank", "noopener,noreferrer");
-      });
+      buy.textContent = product.sold ? "Продано" : "Написать в MAX ↗";
+      buy.setAttribute("aria-label", product.sold ? "Товар продан: " + safeText(product.name) : "Написать продавцу в MAX о товаре " + safeText(product.name));
+      if (product.sold) {
+        buy.disabled = true;
+        buy.style.background = "#353840";
+        buy.style.borderColor = "#555963";
+        buy.style.color = "#d5d7dc";
+        buy.style.cursor = "not-allowed";
+      } else {
+        buy.addEventListener("click", () => {
+          window.open("https://max.ru/u/f9LHodD0cOIAodaIAJ2qZbJ5KEaoyZ4JLZZicj-DRIgEfDW0oN_xFXRcRgw", "_blank", "noopener,noreferrer");
+        });
+      }
       bottom.append(price, buy);
       info.appendChild(bottom);
       card.append(imageWrap, info);
@@ -629,7 +642,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
     try {
       const {data, error} = await client
         .from("store_products")
-        .select("id,name,price,category,description,size,image_url,active,created_at")
+        .select("id,name,price,category,description,size,image_url,active,sold,created_at")
         .eq("active", true)
         .order("created_at", {ascending: false});
       if (error) throw error;
