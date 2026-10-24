@@ -71,6 +71,10 @@ h2{margin:8px 0 0;font-size:clamp(27px,4vw,39px);letter-spacing:-.04em}
 .product:hover{transform:translateY(-5px);border-color:#e8c47755;box-shadow:0 20px 50px #0007}
 .product-image{position:relative;aspect-ratio:4/4.4;background:#191b21;overflow:hidden}
 .product-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s;cursor:zoom-in}
+.photo-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:34px;height:42px;border:1px solid #ffffff55;border-radius:9px;background:#08090cbb;color:#fff;font-size:30px;line-height:1;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(5px)}
+.photo-arrow:first-of-type{left:9px}
+.photo-arrow:nth-of-type(2){right:9px}
+.photo-counter{position:absolute;right:10px;bottom:10px;z-index:3;padding:4px 8px;border-radius:20px;background:#08090cbb;color:#fff;font-size:11px;pointer-events:none}
 .photo-lightbox{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;background:#050609ed;backdrop-filter:blur(8px)}
 .photo-lightbox.open{display:flex}
 .photo-lightbox img{display:block;max-width:min(100%,1100px);max-height:calc(100vh - 48px);width:auto;height:auto;object-fit:contain;border-radius:12px;box-shadow:0 20px 80px #0009}
@@ -317,38 +321,58 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
         return [product.image_url];
       })();
       if (photoUrls.length) {
-        const gallery = document.createElement("div");
-        gallery.style.cssText = "display:flex;width:100%;height:100%;gap:3px";
-        photoUrls.forEach((url, index) => {
-          const img = document.createElement("img");
-          img.src = url;
-          img.alt = (safeText(product.name) || "Фото товара") + " — фото " + (index + 1);
-          img.loading = "lazy";
-          img.tabIndex = 0;
-          img.setAttribute("role", "button");
-          img.setAttribute("aria-label", "Открыть фото " + (index + 1) + " товара: " + safeText(product.name));
-          if (photoUrls.length > 1) img.style.width = "50%";
-          const openPhoto = () => {
-            lastFocusedElement = img;
-            lightboxImage.src = img.src;
-            lightboxImage.alt = img.alt;
-            lightbox.classList.add("open");
-            document.body.style.overflow = "hidden";
-            lightboxClose.focus();
-          };
-          img.addEventListener("click", openPhoto);
-          img.addEventListener("keydown", event => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              openPhoto();
-            }
-          });
-          img.onerror = () => {
-            img.alt = "Не удалось загрузить фото товара";
-          };
-          gallery.appendChild(img);
+        let activePhoto = 0;
+        const img = document.createElement("img");
+        img.src = photoUrls[0];
+        img.alt = (safeText(product.name) || "Фото товара") + " — фото 1";
+        img.loading = "lazy";
+        img.tabIndex = 0;
+        img.setAttribute("role", "button");
+        img.setAttribute("aria-label", "Открыть фото товара: " + safeText(product.name));
+        const openPhoto = () => {
+          lastFocusedElement = img;
+          lightboxImage.src = img.src;
+          lightboxImage.alt = img.alt;
+          lightbox.classList.add("open");
+          document.body.style.overflow = "hidden";
+          lightboxClose.focus();
+        };
+        img.addEventListener("click", openPhoto);
+        img.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openPhoto();
+          }
         });
-        imageWrap.appendChild(gallery);
+        img.onerror = () => {
+          img.alt = "Не удалось загрузить фото товара";
+        };
+        imageWrap.appendChild(img);
+
+        if (photoUrls.length > 1) {
+          const makeArrow = (symbol, label, step) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "photo-arrow";
+            button.textContent = symbol;
+            button.setAttribute("aria-label", label);
+            button.addEventListener("click", event => {
+              event.stopPropagation();
+              activePhoto = (activePhoto + step + photoUrls.length) % photoUrls.length;
+              img.src = photoUrls[activePhoto];
+              img.alt = (safeText(product.name) || "Фото товара") + " — фото " + (activePhoto + 1);
+              img.setAttribute("aria-label", "Открыть фото " + (activePhoto + 1) + " товара: " + safeText(product.name));
+              counter.textContent = (activePhoto + 1) + " / " + photoUrls.length;
+            });
+            return button;
+          };
+          const previous = makeArrow("‹", "Предыдущее фото", -1);
+          const next = makeArrow("›", "Следующее фото", 1);
+          const counter = document.createElement("span");
+          counter.className = "photo-counter";
+          counter.textContent = "1 / " + photoUrls.length;
+          imageWrap.append(previous, next, counter);
+        }
       } else {
         const placeholder = document.createElement("div");
         placeholder.className = "no-photo";
