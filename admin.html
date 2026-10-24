@@ -51,6 +51,14 @@
   </section>
 
   <section id="adminPanel" class="hidden">
+
+    <div class="panel">
+      <h2>⭐ Модерация отзывов</h2>
+      <p class="muted">Новые отзывы сначала ожидают проверки. Одобренные появятся в магазине.</p>
+      <button id="refreshReviewsBtn" class="secondary" type="button">Обновить отзывы</button>
+      <div id="reviews"></div>
+    </div>
+
     <div class="panel">
       <button id="logoutBtn" class="secondary" type="button">Выйти</button>
       <h2 id="formTitle">Добавить товар</h2>
@@ -102,6 +110,7 @@
   let editingId = null;
   let currentImageUrl = null;
   let products = [];
+  let reviews = [];
 
   function message(text, error = false) {
     $("message").textContent = text;
@@ -127,6 +136,109 @@
   function publicImageUrl(path) {
     return client.storage.from(BUCKET).getPublicUrl(path)
       .data.publicUrl;
+  }
+
+
+  async function verifyAdmin() {
+    const { data: sessionData, error: sessionError } = await client.auth.getSession();
+    if (sessionError) throw sessionError;
+    const user = sessionData.session && sessionData.session.user;
+    if (!user) return false;
+
+    const { data, error } = await client
+      .from("store_admins")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return !!data;
+  }
+
+  async function loadReviews() {
+    const button = $("refreshReviewsBtn");
+    if (button) button.disabled = true;
+    try {
+      const { data, error } = await client
+        .from("store_reviews")
+        .select("id, product_id, product_name, author_name, rating, review_text, status, created_at")
+        .eq("status", "pending")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      reviews = data || [];
+      renderReviews();
+    } catch (error) {
+      $("reviews").textContent = "Не удалось загрузить отзывы: " + error.message;
+    } finally {
+      if (button) button.disabled = false;
+    }
+  }
+
+  function renderReviews() {
+    const container = $("reviews");
+    container.replaceChildren();
+    if (!reviews.length) {
+      container.textContent = "Новых отзывов нет 🎉";
+      return;
+    }
+
+    reviews.forEach(review => {
+      const card = document.createElement("article");
+      card.className = "product";
+      const title = document.createElement("h3");
+      title.textContent = review.product_name || ("Товар №" + review.product_id);
+      card.appendChild(title);
+
+      const meta = document.createElement("p");
+      const date = review.created_at ? new Date(review.created_at).toLocaleString("ru-RU") : "";
+      meta.textContent = (review.author_name || "Без имени") + " · " +
+        "★".repeat(Math.max(0, Math.min(5, Number(review.rating) || 0)) ) +
+        " · " + date;
+      card.appendChild(meta);
+
+      const body = document.createElement("p");
+      body.style.whiteSpace = "pre-wrap";
+      body.textContent = review.review_text || "";
+      card.appendChild(body);
+
+      const approve = document.createElement("button");
+      approve.type = "button";
+      approve.textContent = "✅ Одобрить";
+      approve.addEventListener("click", () => moderateReview(review, "approved", approve, reject));
+      card.appendChild(approve);
+
+      const reject = document.createElement("button");
+      reject.type = "button";
+      reject.className = "danger";
+      reject.textContent = "❌ Отклонить";
+      reject.addEventListener("click", () => moderateReview(review, "rejected", reject, approve));
+      card.appendChild(reject);
+      container.appendChild(card);
+    });
+  }
+
+  async function moderateReview(review, status, button, otherButton) {
+    button.disabled = true;
+    otherButton.disabled = true;
+    message(status === "approved" ? "Одобряю отзыв…" : "Отклоняю отзыв…");
+    try {
+      const { data, error } = await client
+        .from("store_reviews")
+        .update({ status })
+        .eq("id", review.id)
+        .eq("status", "pending")
+        .select("id");
+      if (error) throw error;
+      if (!data || !data.length) {
+        throw new Error("Отзыв не изменён. Проверь права администратора в Supabase.");
+      }
+      message(status === "approved" ? "Отзыв одобрен и появится в магазине." : "Отзыв отклонён.");
+      await loadReviews();
+    } catch (error) {
+      message("Не удалось изменить отзыв: " + error.message, true);
+      button.disabled = false;
+      otherButton.disabled = false;
+    }
   }
 
   async function loadProducts() {
@@ -373,8 +485,15 @@
       });
       if (error) throw error;
 
+      const isAdmin = await verifyAdmin();
+      if (!isAdmin) {
+        await client.auth.signOut();
+        showAdmin(false);
+        throw new Error("Этот аккаунт не добавлен в store_admins. Доступ запрещён.");
+      }
+
       showAdmin(true);
-      await loadProducts();
+      await Promise.all([loadProducts(), loadReviews()]);
     } catch (error) {
       message("Ошибка входа: " + error.message, true);
     } finally {
@@ -394,19 +513,35 @@
     }
     showAdmin(false);
     resetForm();
+    $("reviews").replaceChildren();
+    reviews = [];
     message("Ты вышел из админки.");
   });
 
   $("cancelBtn").addEventListener("click", resetForm);
   $("refreshBtn").addEventListener("click", loadProducts);
+  $("refreshReviewsBtn").addEventListener("click", loadReviews);
 
   client.auth.getSession().then(({ data, error }) => {
     if (error) {
       message("Ошибка проверки сессии: " + error.message, true);
       return;
     }
-    showAdmin(!!data.session);
-    if (data.session) loadProducts();
+    if (!data.session) {
+      showAdmin(false);
+      return;
+    }
+    verifyAdmin().then(isAdmin => {
+      showAdmin(isAdmin);
+      if (isAdmin) Promise.all([loadProducts(), loadReviews()]);
+      else {
+        client.auth.signOut();
+        message("Этот аккаунт не добавлен в store_admins. Доступ запрещён.", true);
+      }
+    }).catch(err => {
+      showAdmin(false);
+      message("Не удалось проверить права администратора: " + err.message, true);
+    });
   });
 })();
 </script>
