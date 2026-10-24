@@ -30,7 +30,7 @@
       background: #1b1d22; border: 1px solid #34363d;
       padding: 14px; margin: 14px 0; border-radius: 12px;
     }
-    .product img { width: 100%; max-height: 230px; object-fit: contain; }
+    .product img { width: 100%; max-height: 230px; object-fit: contain; }\n    .image-previews { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }\n    .image-previews img { width:78px; height:78px; object-fit:cover; border:1px solid #41434a; border-radius:8px; }
     .muted { color: #b8bac2; font-size: 14px; }
     #message { white-space: pre-wrap; overflow-wrap: anywhere; }
     .hidden { display: none; }
@@ -133,7 +133,7 @@
     $("preview").removeAttribute("src");
   }
 
-  function publicImageUrl(path) {
+  function getProductImages(value) {\n    if (!value) return [];\n    try {\n      const parsed = JSON.parse(value);\n      if (Array.isArray(parsed)) return parsed.filter(url => typeof url === "string" && url);\n    } catch (_) {}\n    return [String(value)];\n  }\n\n  function renderImagePreviews(urls) {\n    const gallery = $("previewGallery");\n    gallery.replaceChildren();\n    urls.forEach(url => {\n      const img = document.createElement("img");\n      img.src = url;\n      img.alt = "Фото товара";\n      gallery.appendChild(img);\n    });\n  }\n\n  function publicImageUrl(path) {
     return client.storage.from(BUCKET).getPublicUrl(path)
       .data.publicUrl;
   }
@@ -320,7 +320,7 @@
 
   function editProduct(product) {
     editingId = product.id;
-    currentImageUrl = product.image_url || null;
+    currentImageUrls = getProductImages(product.image_url);
 
     $("productName").value = product.name || "";
     $("productPrice").value = product.price ?? "";
@@ -378,27 +378,23 @@
   }
 
   $("productImage").addEventListener("change", () => {
-    const file = $("productImage").files[0];
-    if (!file) {
-      $("preview").classList.toggle("hidden", !currentImageUrl);
-      if (currentImageUrl) $("preview").src = currentImageUrl;
-      return;
+    const files = Array.from($("productImage").files || []);
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) {
+        message("Выбери только файлы изображений.", true);
+        $("productImage").value = "";
+        renderImagePreviews(currentImageUrls);
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        message("Каждое фото должно быть не больше 8 МБ.", true);
+        $("productImage").value = "";
+        renderImagePreviews(currentImageUrls);
+        return;
+      }
     }
-
-    if (!file.type.startsWith("image/")) {
-      message("Выбери файл изображения.", true);
-      $("productImage").value = "";
-      return;
-    }
-
-    if (file.size > 8 * 1024 * 1024) {
-      message("Фото должно быть не больше 8 МБ.", true);
-      $("productImage").value = "";
-      return;
-    }
-
-    $("preview").src = URL.createObjectURL(file);
-    $("preview").classList.remove("hidden");
+    const temporaryUrls = files.map(file => URL.createObjectURL(file));
+    renderImagePreviews([...currentImageUrls, ...temporaryUrls]);
   });
 
   $("productForm").addEventListener("submit", async event => {
@@ -423,13 +419,15 @@
         throw new Error("Проверь название, категорию и цену.");
       }
 
-      const file = $("productImage").files[0];
+      const files = Array.from($("productImage").files || []);
+      const imageUrls = [...currentImageUrls];
 
-      if (file) {
-        message("Загружаю фотографию…");
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index];
+        message("Загружаю фото " + (index + 1) + " из " + files.length + "…");
         const ext = (file.name.split(".").pop() || "jpg")
           .toLowerCase().replace(/[^a-z0-9]/g, "");
-        const path = Date.now() + "-" +
+        const path = Date.now() + "-" + index + "-" +
           Math.random().toString(36).slice(2) + "." + ext;
 
         const { error: uploadError } = await client.storage
@@ -440,10 +438,12 @@
           });
 
         if (uploadError) throw uploadError;
-        payload.image_url = publicImageUrl(path);
-      } else if (!editingId) {
-  payload.image_url = "";
-}
+        imageUrls.push(publicImageUrl(path));
+      }
+
+      payload.image_url = imageUrls.length > 1
+        ? JSON.stringify(imageUrls)
+        : (imageUrls[0] || "");
 
       message("Сохраняю товар…");
 
