@@ -52,6 +52,10 @@ header{position:sticky;top:0;z-index:20;background:#090a0de8;backdrop-filter:blu
 .glass-title{margin-top:5px;font-size:clamp(17px,2vw,23px);font-weight:750;line-height:1.1;letter-spacing:-.6px}
 .glass-divider{height:1px;margin:11px 0 8px;background:linear-gradient(90deg,#34d39945,#ffffff10,transparent)}
 .glass-bottom{display:flex;justify-content:space-between;gap:7px;color:#a9adb7;font-size:7px;font-weight:750;letter-spacing:.8px}
+.music-price{margin-top:8px;color:var(--gold2);font-size:27px;font-weight:900;letter-spacing:-1px}
+.music-price span{color:#a9adb7;font-size:10px;font-weight:650;letter-spacing:0}
+.music-order{align-self:flex-start;margin-top:12px;padding:10px 13px;border-radius:10px;font-size:11px}
+
 @media(max-width:760px){.hero{grid-template-columns:1fr;gap:8px}.hero-copy{padding:16px 17px;border-radius:16px}.hero-glass{min-height:118px;padding:13px 16px;border-radius:16px}.glass-label{margin-top:10px}.glass-divider{margin:9px 0 7px}}
 .hero:before{content:"";position:absolute;z-index:-1;width:420px;height:420px;right:-100px;top:-170px;border-radius:50%;background:radial-gradient(circle,#34d39925 0,transparent 68%)}
 .hero:after{content:"BOXING";position:absolute;z-index:-1;right:-15px;bottom:-40px;font-size:clamp(70px,14vw,175px);font-weight:950;letter-spacing:-.09em;color:#34d39908;white-space:nowrap}
@@ -176,13 +180,13 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       <div class="eyebrow">Магазин интересных находок</div>
       <h1>Хорошие вещи.<br><span>Честные цены.</span></h1>
     </div>
-    <div class="hero-glass" aria-label="Преимущества магазина">
+    <div class="hero-glass music-card" aria-label="Создание музыки на заказ">
       <div class="glass-orb" aria-hidden="true"></div>
-      <div class="glass-topline"><span class="glass-dot"></span> BOXING SELECT</div>
-      <div class="glass-label">ТВОЯ СЛЕДУЮЩАЯ НАХОДКА</div>
-      <div class="glass-title">Выбирай<br>с удовольствием.</div>
-      <div class="glass-divider"></div>
-      <div class="glass-bottom"><span>КАТАЛОГ</span><span>СРОСТКИ · RU</span></div>
+      <div class="glass-topline"><span class="glass-dot"></span> МУЗЫКА НА ЗАКАЗ</div>
+      <div class="glass-label">ТВОЯ ИСТОРИЯ — ТВОЯ ПЕСНЯ</div>
+      <div class="glass-title">Сделаю песню<br>для тебя</div>
+      <div class="music-price">90 ₽ <span>за песню</span></div>
+      <a class="btn btn-gold music-order" href="https://max.ru/u/f9LHodD0cOIAodaIAJ2qZbJ5KEaoyZ4JLZZicj-DRIgEfDW0oN_xFXRcRgw" target="_blank" rel="noopener noreferrer">Заказать в MAX ↗</a>
     </div>
   </section>
   <div class="trust-row" aria-label="Преимущества">
