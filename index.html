@@ -677,9 +677,9 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 
 <style>
 /* Boxing Store helper chat */
-.boxing-chat-launch{position:fixed;right:20px;bottom:20px;z-index:1200;display:flex;align-items:center;gap:10px;padding:13px 17px;border:1px solid #a7f3d0;border-radius:999px;background:linear-gradient(135deg,#a7f3d0,#10b981);color:#07110c;font-weight:850;font-size:14px;box-shadow:0 10px 35px #0008;cursor:pointer}
+.boxing-chat-launch{position:fixed;left:auto!important;right:max(12px,env(safe-area-inset-right))!important;bottom:max(12px,env(safe-area-inset-bottom))!important;z-index:1200;display:flex;align-items:center;justify-content:center;gap:10px;width:max-content;max-width:calc(100vw - 24px);min-width:0;padding:13px 17px;border:1px solid #a7f3d0;border-radius:999px;background:linear-gradient(135deg,#a7f3d0,#10b981);color:#07110c;font-weight:850;font-size:14px;line-height:1.25;white-space:normal;box-shadow:0 10px 35px #0008;cursor:pointer;transform:none!important;margin:0!important}
 .boxing-chat-launch .chat-icon{font-size:20px}
-.boxing-chat-panel{position:fixed;right:20px;bottom:84px;z-index:1200;width:min(370px,calc(100vw - 28px));height:min(540px,calc(100dvh - 120px));display:none;flex-direction:column;overflow:hidden;border:1px solid #34d39955;border-radius:20px;background:#101318;color:#f4f5f7;box-shadow:0 24px 80px #000b;font-family:inherit}
+.boxing-chat-panel{position:fixed;left:auto!important;right:max(12px,env(safe-area-inset-right))!important;bottom:max(78px,calc(env(safe-area-inset-bottom) + 70px))!important;z-index:1200;width:min(370px,calc(100vw - 24px));height:min(540px,calc(100dvh - 120px));display:none;flex-direction:column;overflow:hidden;border:1px solid #34d39955;border-radius:20px;background:#101318;color:#f4f5f7;box-shadow:0 24px 80px #000b;font-family:inherit}
 .boxing-chat-panel.is-open{display:flex}
 .boxing-chat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;background:linear-gradient(120deg,#17271f,#111318);border-bottom:1px solid #ffffff15}
 .boxing-chat-brand{display:flex;align-items:center;gap:10px;font-weight:850}
@@ -696,7 +696,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 .boxing-chat-input:focus{border-color:#34d399}
 .boxing-chat-send{padding:0 14px;border:0;border-radius:12px;background:#34d399;color:#07110c;font-weight:900;cursor:pointer}
 .boxing-chat-note{padding:0 13px 10px;background:#0b0d10;color:#818895;font-size:10px;line-height:1.4}
-@media(max-width:480px){.boxing-chat-launch{right:13px;bottom:13px;padding:12px 15px}.boxing-chat-panel{right:10px;bottom:75px;width:calc(100vw - 20px);height:min(560px,calc(100dvh - 100px))}}
+@media(max-width:480px){.boxing-chat-launch{right:max(10px,env(safe-area-inset-right))!important;bottom:max(10px,env(safe-area-inset-bottom))!important;max-width:calc(100vw - 20px);padding:12px 15px;font-size:13px}.boxing-chat-panel{left:auto!important;right:max(10px,env(safe-area-inset-right))!important;bottom:max(72px,calc(env(safe-area-inset-bottom) + 66px))!important;width:calc(100vw - 20px);max-width:370px;height:min(560px,calc(100dvh - 100px))}}
 </style>
 <button class="boxing-chat-launch" id="boxing-chat-launch" type="button" aria-expanded="false" aria-controls="boxing-chat-panel"><span class="chat-icon" aria-hidden="true">✦</span> Помощник магазина</button>
 <section class="boxing-chat-panel" id="boxing-chat-panel" role="dialog" aria-label="Помощник магазина" aria-modal="false">
