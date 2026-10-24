@@ -110,7 +110,7 @@
   );
 
   let editingId = null;
-  let currentImageUrl = null;
+  let currentImageUrls = [];
   let products = [];
   let reviews = [];
 
@@ -126,13 +126,12 @@
 
   function resetForm() {
     editingId = null;
-    currentImageUrl = null;
+    currentImageUrls = [];
     $("productForm").reset();
     $("formTitle").textContent = "Добавить товар";
     $("saveBtn").textContent = "Добавить товар";
     $("cancelBtn").classList.add("hidden");
-    $("preview").classList.add("hidden");
-    $("preview").removeAttribute("src");
+    $("previewGallery").replaceChildren();
   }
 
   function getProductImages(value) {\n    if (!value) return [];\n    try {\n      const parsed = JSON.parse(value);\n      if (Array.isArray(parsed)) return parsed.filter(url => typeof url === "string" && url);\n    } catch (_) {}\n    return [String(value)];\n  }\n\n  function renderImagePreviews(urls) {\n    const gallery = $("previewGallery");\n    gallery.replaceChildren();\n    urls.forEach(url => {\n      const img = document.createElement("img");\n      img.src = url;\n      img.alt = "Фото товара";\n      gallery.appendChild(img);\n    });\n  }\n\n  function publicImageUrl(path) {
@@ -333,8 +332,7 @@
     $("saveBtn").textContent = "Сохранить изменения";
     $("cancelBtn").classList.remove("hidden");
 
-    $("preview").classList.toggle("hidden", !currentImageUrl);
-    if (currentImageUrl) $("preview").src = currentImageUrl;
+    renderImagePreviews(currentImageUrls);
 
     window.scrollTo({ top: 0, behavior: "smooth" });
     message("Редактируешь товар №" + product.id);
