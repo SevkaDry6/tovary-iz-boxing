@@ -108,7 +108,26 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 .review-body{font-size:12px;line-height:1.75;color:#c2c6ce;overflow-wrap:anywhere;white-space:pre-wrap}
 @media(max-width:680px){.reviews-list{grid-template-columns:1fr}.review-card{padding:15px}}
 
-</style>
+
+.filters-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-7px 0 22px}
+.filter-field{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:11px;background:#111318;color:#9da2ad;font-size:11px}
+.filter-field input{width:86px;min-width:0;border:0;outline:none;background:transparent;color:var(--text);font-size:12px}
+.filter-field select{max-width:180px;border:0;outline:none;background:#111318;color:var(--text);font-size:12px}
+.cart-panel{margin:0 0 24px;padding:18px;border:1px solid #e8c47745;border-radius:18px;background:linear-gradient(120deg,#191a1f,#1d190f)}
+.cart-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.cart-title{font-size:16px;font-weight:850}.cart-count{color:var(--gold2);font-size:12px;margin-left:7px}
+.cart-total{font-size:22px;font-weight:900;color:var(--gold2);white-space:nowrap}
+.cart-items{display:grid;gap:9px;margin-top:13px}
+.cart-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #ffffff12}
+.cart-item-name{font-size:12px;font-weight:700}.cart-item-sub{margin-top:4px;color:var(--muted);font-size:11px}
+.cart-controls{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.cart-controls button{width:29px;height:29px;border:1px solid #e8c47750;border-radius:8px;background:#111318;color:var(--gold2);font-weight:900}
+.cart-qty{min-width:15px;text-align:center;font-size:12px}
+.cart-empty{margin-top:12px;color:var(--muted);font-size:12px}
+.add-cart{width:100%;margin-top:9px;border:1px solid #e8c47765;border-radius:10px;background:#ffffff08;color:var(--gold2);padding:10px 8px;font-size:11px;font-weight:800}
+.add-cart:hover{background:#e8c477;color:#17140e}
+@media(max-width:680px){.filters-row{align-items:stretch}.filter-field{flex:1;min-width:calc(50% - 6px);justify-content:space-between}.filter-field input{width:75px}.cart-panel{padding:14px}.cart-total{font-size:19px}.cart-item{align-items:flex-start}}
+\n</style>
 </head>
 <body>
 <header>
@@ -162,6 +181,27 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
     <div class="categories" id="categories">
       <button class="category active" type="button" data-category="Все">Все товары</button>
     </div>
+
+    <div class="filters-row" aria-label="Фильтры каталога">
+      <label class="filter-field">Цена от <input id="price-min" type="number" min="0" step="1" placeholder="0" aria-label="Минимальная цена"></label>
+      <label class="filter-field">Цена до <input id="price-max" type="number" min="0" step="1" placeholder="Без лимита" aria-label="Максимальная цена"></label>
+      <label class="filter-field">Сортировка
+        <select id="sort-products" aria-label="Сортировка товаров">
+          <option value="new">Сначала новые</option>
+          <option value="price-asc">Сначала дешевле</option>
+          <option value="price-desc">Сначала дороже</option>
+          <option value="name">По названию</option>
+        </select>
+      </label>
+    </div>
+    <section class="cart-panel" aria-label="Корзина">
+      <div class="cart-head">
+        <div><span class="cart-title">🛒 Корзина</span><span class="cart-count" id="cart-count">0 товаров</span></div>
+        <div class="cart-total" id="cart-total">0 ₽</div>
+      </div>
+      <div id="cart-items" class="cart-items"></div>
+      <div id="cart-empty" class="cart-empty">Добавляй товары кнопкой «В корзину» — здесь появится общая сумма.</div>
+    </section>
     <div class="products" id="product-list" aria-live="polite">
       <div class="state"><strong>Загружаем каталог…</strong><p>Секунду, проверяем новые товары.</p></div>
     </div>
@@ -411,6 +451,60 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       list.appendChild(card);
     });
   }
+  function renderCart() {
+    cartItems.replaceChildren();
+    let totalQty = 0;
+    let total = 0;
+    for (const [id, entry] of cart) {
+      const product = entry.product;
+      totalQty += entry.qty;
+      total += Number(product.price || 0) * entry.qty;
+      const row = document.createElement("div");
+      row.className = "cart-item";
+      const description = document.createElement("div");
+      const name = document.createElement("div");
+      name.className = "cart-item-name";
+      name.textContent = safeText(product.name) || "Товар";
+      const subtotal = document.createElement("div");
+      subtotal.className = "cart-item-sub";
+      subtotal.textContent = money(product.price) + " × " + entry.qty + " = " + money(Number(product.price || 0) * entry.qty);
+      description.append(name, subtotal);
+      const controls = document.createElement("div");
+      controls.className = "cart-controls";
+      const minus = document.createElement("button");
+      minus.type = "button";
+      minus.textContent = "−";
+      minus.setAttribute("aria-label", "Уменьшить количество " + safeText(product.name));
+      minus.addEventListener("click", () => {
+        entry.qty -= 1;
+        if (entry.qty <= 0) cart.delete(id);
+        renderCart();
+        renderProducts();
+      });
+      const qty = document.createElement("span");
+      qty.className = "cart-qty";
+      qty.textContent = String(entry.qty);
+      const plus = document.createElement("button");
+      plus.type = "button";
+      plus.textContent = "+";
+      plus.setAttribute("aria-label", "Увеличить количество " + safeText(product.name));
+      plus.addEventListener("click", () => {
+        entry.qty += 1;
+        renderCart();
+        renderProducts();
+      });
+      controls.append(minus, qty, plus);
+      row.append(description, controls);
+      cartItems.appendChild(row);
+    }
+    cartCount.textContent = totalQty + (totalQty === 1 ? " товар" : totalQty >= 2 && totalQty <= 4 ? " товара" : " товаров");
+    cartTotal.textContent = money(total);
+    cartEmpty.hidden = totalQty > 0;
+  }
+
+  priceMin.addEventListener("input", renderProducts);
+  priceMax.addEventListener("input", renderProducts);
+  sortProducts.addEventListener("change", renderProducts);
   categories.addEventListener("click", event => {
     const button = event.target.closest("button[data-category]");
     if (!button) return;
