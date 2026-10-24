@@ -330,8 +330,8 @@
         if (uploadError) throw uploadError;
         payload.image_url = publicImageUrl(path);
       } else if (!editingId) {
-        payload.image_url = null;
-      }
+  payload.image_url = "";
+}
 
       message("Сохраняю товар…");
 
