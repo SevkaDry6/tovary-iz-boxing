@@ -70,7 +70,13 @@ h2{margin:8px 0 0;font-size:clamp(27px,4vw,39px);letter-spacing:-.04em}
 .product{min-width:0;overflow:hidden;border:1px solid #ffffff12;border-radius:19px;background:linear-gradient(160deg,#17191f,#101115);transition:transform .25s,border-color .25s,box-shadow .25s}
 .product:hover{transform:translateY(-5px);border-color:#e8c47755;box-shadow:0 20px 50px #0007}
 .product-image{position:relative;aspect-ratio:4/4.4;background:#191b21;overflow:hidden}
-.product-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s}
+.product-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s;cursor:zoom-in}
+.photo-lightbox{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;background:#050609ed;backdrop-filter:blur(8px)}
+.photo-lightbox.open{display:flex}
+.photo-lightbox img{display:block;max-width:min(100%,1100px);max-height:calc(100vh - 48px);width:auto;height:auto;object-fit:contain;border-radius:12px;box-shadow:0 20px 80px #0009}
+.photo-lightbox-close{position:absolute;top:16px;right:18px;width:44px;height:44px;border:1px solid #ffffff40;border-radius:50%;background:#17191f;color:#fff;font-size:27px;line-height:1}
+.photo-lightbox-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:#b9bdc6;font-size:12px;pointer-events:none}
+@media(max-width:600px){.photo-lightbox{padding:12px}.photo-lightbox img{max-width:100%;max-height:calc(100vh - 24px)}.photo-lightbox-close{top:10px;right:10px}}
 .product:hover .product-image img{transform:scale(1.045)}
 .no-photo{width:100%;height:100%;display:grid;place-items:center;color:#656b77;font-size:12px;letter-spacing:1px;text-transform:uppercase;background:radial-gradient(circle at 50% 40%,#272a31,#14161b 65%)}
 .tag{position:absolute;top:12px;left:12px;border:1px solid #e8c47755;border-radius:7px;padding:7px 9px;background:#0b0c10d9;color:var(--gold2);font-size:9px;font-weight:800;letter-spacing:1px}
@@ -214,6 +220,12 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   </div>
 </footer>
 
+<div class="photo-lightbox" id="photo-lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фотографии товара">
+  <button class="photo-lightbox-close" id="photo-lightbox-close" type="button" aria-label="Закрыть фото">×</button>
+  <img id="photo-lightbox-image" alt="">
+  <div class="photo-lightbox-hint">Нажми на затемнённый фон или ×, чтобы закрыть</div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {
@@ -227,6 +239,10 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   const priceMin = document.getElementById("price-min");
   const priceMax = document.getElementById("price-max");
   const priceReset = document.getElementById("price-reset");
+  const lightbox = document.getElementById("photo-lightbox");
+  const lightboxImage = document.getElementById("photo-lightbox-image");
+  const lightboxClose = document.getElementById("photo-lightbox-close");
+  let lastFocusedElement = null;
   let products = [];
   let reviews = [];
   let activeCategory = "Все";
@@ -297,6 +313,24 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
         img.src = product.image_url;
         img.alt = safeText(product.name) || "Фото товара";
         img.loading = "lazy";
+        img.tabIndex = 0;
+        img.setAttribute("role", "button");
+        img.setAttribute("aria-label", "Открыть фото товара: " + safeText(product.name));
+        const openPhoto = () => {
+          lastFocusedElement = img;
+          lightboxImage.src = img.src;
+          lightboxImage.alt = img.alt;
+          lightbox.classList.add("open");
+          document.body.style.overflow = "hidden";
+          lightboxClose.focus();
+        };
+        img.addEventListener("click", openPhoto);
+        img.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openPhoto();
+          }
+        });
         img.onerror = () => {
           const placeholder = document.createElement("div");
           placeholder.className = "no-photo";
@@ -437,6 +471,20 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       list.appendChild(card);
     });
   }
+  function closePhoto() {
+    lightbox.classList.remove("open");
+    lightboxImage.removeAttribute("src");
+    document.body.style.overflow = "";
+    if (lastFocusedElement) lastFocusedElement.focus();
+  }
+  lightboxClose.addEventListener("click", closePhoto);
+  lightbox.addEventListener("click", event => {
+    if (event.target === lightbox) closePhoto();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && lightbox.classList.contains("open")) closePhoto();
+  });
+
   categories.addEventListener("click", event => {
     const button = event.target.closest("button[data-category]");
     if (!button) return;
