@@ -70,7 +70,11 @@ h2{margin:8px 0 0;font-size:clamp(27px,4vw,39px);letter-spacing:-.04em}
 .product{min-width:0;overflow:hidden;border:1px solid #ffffff12;border-radius:19px;background:linear-gradient(160deg,#17191f,#101115);transition:transform .25s,border-color .25s,box-shadow .25s}
 .product:hover{transform:translateY(-5px);border-color:#e8c47755;box-shadow:0 20px 50px #0007}
 .product-image{position:relative;aspect-ratio:4/4.4;background:#191b21;overflow:hidden}
-.product-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s;cursor:zoom-in}\n.product-thumbnails{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px 0}\n.product-thumbnail{width:43px;height:43px;padding:0;border:1px solid #ffffff22;border-radius:7px;overflow:hidden;background:#111318;cursor:pointer}\n.product-thumbnail img{width:100%;height:100%;object-fit:cover;display:block}\n.product-thumbnail.active{border:2px solid var(--gold)}
+.product-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s;cursor:zoom-in}
+.product-thumbnails{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px 0}
+.product-thumbnail{width:43px;height:43px;padding:0;border:1px solid #ffffff22;border-radius:7px;overflow:hidden;background:#111318;cursor:pointer}
+.product-thumbnail img{width:100%;height:100%;object-fit:cover;display:block}
+.product-thumbnail.active{border:2px solid var(--gold)}
 .photo-lightbox{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;background:#050609ed;backdrop-filter:blur(8px)}
 .photo-lightbox.open{display:flex}
 .photo-lightbox img{display:block;max-width:min(100%,1100px);max-height:calc(100vh - 48px);width:auto;height:auto;object-fit:contain;border-radius:12px;box-shadow:0 20px 80px #0009}
@@ -469,7 +473,9 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       });
       bottom.append(price, buy);
       info.appendChild(bottom);
-      card.append(imageWrap);\n      if (imageUrls.length > 1) card.appendChild(thumbnails);\n      card.appendChild(info);
+      card.append(imageWrap);
+      if (imageUrls.length > 1) card.appendChild(thumbnails);
+      card.appendChild(info);
       list.appendChild(card);
     });
   }
