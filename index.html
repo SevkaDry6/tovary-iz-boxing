@@ -447,6 +447,19 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       });
       bottom.append(price, buy);
       info.appendChild(bottom);
+      const addCart = document.createElement("button");
+      addCart.type = "button";
+      addCart.className = "add-cart";
+      addCart.textContent = cart.has(String(product.id)) ? "✓ Уже в корзине" : "＋ В корзину";
+      addCart.disabled = cart.has(String(product.id));
+      addCart.addEventListener("click", () => {
+        const id = String(product.id);
+        if (cart.has(id)) return;
+        cart.set(id, {product, qty: 1});
+        renderCart();
+        renderProducts();
+      });
+      info.appendChild(addCart);
       card.append(imageWrap, info);
       list.appendChild(card);
     });
@@ -471,29 +484,20 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       description.append(name, subtotal);
       const controls = document.createElement("div");
       controls.className = "cart-controls";
-      const minus = document.createElement("button");
-      minus.type = "button";
-      minus.textContent = "−";
-      minus.setAttribute("aria-label", "Уменьшить количество " + safeText(product.name));
-      minus.addEventListener("click", () => {
-        entry.qty -= 1;
-        if (entry.qty <= 0) cart.delete(id);
-        renderCart();
-        renderProducts();
-      });
       const qty = document.createElement("span");
       qty.className = "cart-qty";
-      qty.textContent = String(entry.qty);
-      const plus = document.createElement("button");
-      plus.type = "button";
-      plus.textContent = "+";
-      plus.setAttribute("aria-label", "Увеличить количество " + safeText(product.name));
-      plus.addEventListener("click", () => {
-        entry.qty += 1;
+      qty.textContent = "1 шт.";
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "×";
+      remove.title = "Убрать из корзины";
+      remove.setAttribute("aria-label", "Убрать " + safeText(product.name) + " из корзины");
+      remove.addEventListener("click", () => {
+        cart.delete(id);
         renderCart();
         renderProducts();
       });
-      controls.append(minus, qty, plus);
+      controls.append(qty, remove);
       row.append(description, controls);
       cartItems.appendChild(row);
     }
