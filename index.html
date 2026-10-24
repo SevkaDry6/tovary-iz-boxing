@@ -27,7 +27,7 @@ header{position:sticky;top:0;z-index:20;background:#090a0de8;backdrop-filter:blu
 .nav-cta{border:1px solid #fb923c;border-radius:999px;padding:11px 16px;background:linear-gradient(135deg,#fb923c,#f97316);color:#17100a!important;font-weight:850;box-shadow:0 0 0 3px #fb923c20,0 5px 22px #f9731645}.nav-cta:hover{background:linear-gradient(135deg,#fdba74,#fb923c);box-shadow:0 0 0 4px #fb923c30,0 7px 26px #f9731660}
 .hero{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(190px,.65fr);align-items:stretch;gap:12px;margin:14px 0 10px;padding:0;border:0;background:transparent;overflow:visible}
 .hero-copy{position:relative;isolation:isolate;overflow:hidden;z-index:1;padding:clamp(22px,3vw,38px);border:1px solid #34d39938;border-radius:22px;background:radial-gradient(ellipse at 8% 0%,#34d39920,transparent 48%),radial-gradient(ellipse at 100% 100%,#10b98112,transparent 42%),linear-gradient(135deg,#171d1b 0%,#101413 54%,#0b0e0d 100%);box-shadow:0 18px 50px #0005,inset 0 1px #ffffff08}
-.hero-feature{text-decoration:none;color:inherit;cursor:pointer}.hero-feature-image{display:block;width:100%;height:clamp(115px,18vw,190px);object-fit:contain;margin:10px auto 2px;border-radius:12px;background:#090b0a}.hero-feature-price{margin-top:9px;color:#a7f3d0;font-size:clamp(20px,2.6vw,28px);font-weight:900;letter-spacing:-.7px}.hero-feature:hover{border-color:#34d39980;transform:translateY(-2px);transition:transform .2s,border-color .2s}
+.hero-feature{text-decoration:none;color:inherit;cursor:pointer}.hero-feature-image{display:block;width:100%;height:clamp(140px,24vw,260px);object-fit:contain;object-position:left center;margin:14px 0 4px;border:0;border-radius:0;background:transparent}.hero-feature-image[hidden]{display:none}.hero-feature-price{margin-top:10px;color:#a7f3d0;font-size:clamp(22px,2.8vw,30px);font-weight:900;letter-spacing:-.7px}
 .hero-product-description{max-width:620px;margin:15px 0 0;color:#d0d5d2;font-size:clamp(13px,1.4vw,16px);line-height:1.7}.hero h1{margin-bottom:0}
 .hero-copy:before{content:"";position:absolute;z-index:-1;right:-52px;top:-95px;width:250px;height:250px;border:1px solid #34d3991c;border-radius:50%;background:radial-gradient(circle,#34d39918 0%,#34d39906 42%,transparent 70%);box-shadow:0 0 0 18px #34d39905,0 0 0 38px #34d39903}
 .hero-glass{position:relative;isolation:isolate;overflow:hidden;min-height:0;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(18px,2.4vw,28px);border:1px solid #34d39935;border-radius:22px;background:radial-gradient(ellipse at 85% 10%,#34d39922,transparent 54%),linear-gradient(150deg,#17211d,#101513 72%,#0c100e);box-shadow:0 18px 50px #0004,inset 0 1px #ffffff08}
@@ -163,17 +163,17 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       <div class="eyebrow">ИГРОВАЯ КОНСОЛЬ</div>
       <h1>X-Box 360<br><span>500 GB</span></h1>
       <p class="hero-product-description">Прошитая консоль с 188 играми: GTA 5 и GTA 4, Metro, UFC, MMA, Mortal Kombat и многое другое. Не шумит. В комплекте 2 консоли.</p>
-    </div>
-    <a class="hero-glass hero-feature" id="hero-feature-link" href="#catalog" aria-label="Посмотреть товар X-Box 360">
-      <div class="glass-orb" aria-hidden="true"></div>
-      <div class="glass-topline"><span class="glass-dot"></span> ТОВАР ИЗ КАТАЛОГА</div>
       <img class="hero-feature-image" id="hero-feature-image" alt="Игровая консоль X-Box 360" hidden>
-      <div class="glass-label">ИГРОВАЯ КОНСОЛЬ</div>
-      <div class="glass-title">X-Box 360</div>
       <div class="hero-feature-price" id="hero-feature-price">Смотреть в каталоге</div>
+    </div>
+    <div class="hero-glass" aria-label="Преимущества магазина">
+      <div class="glass-orb" aria-hidden="true"></div>
+      <div class="glass-topline"><span class="glass-dot"></span> BOXING SELECT</div>
+      <div class="glass-label">ТВОЯ СЛЕДУЮЩАЯ НАХОДКА</div>
+      <div class="glass-title">Выбирай<br>с удовольствием.</div>
       <div class="glass-divider"></div>
-      <div class="glass-bottom"><span>500 GB · 188 ИГР</span><span>2 КОНСОЛИ</span></div>
-    </a>
+      <div class="glass-bottom"><span>КАТАЛОГ</span><span>СРОСТКИ · RU</span></div>
+    </div>
   </section>
   <div class="trust-row" aria-label="Преимущества">
     <span><b>✦</b> Новые находки</span>
@@ -655,7 +655,6 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       if (featuredConsole) {
         const featureImage = document.getElementById("hero-feature-image");
         const featurePrice = document.getElementById("hero-feature-price");
-        const featureLink = document.getElementById("hero-feature-link");
         let featurePhoto = "";
         if (featuredConsole.image_url) {
           try {
@@ -665,8 +664,6 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
         }
         if (featurePhoto) { featureImage.src = featurePhoto; featureImage.hidden = false; }
         featurePrice.textContent = money(featuredConsole.price);
-        featureLink.href = "#catalog";
-        featureLink.setAttribute("aria-label", "Игровая консоль X-Box 360 за " + money(featuredConsole.price) + ". Перейти в каталог");
       } else {
         document.getElementById("hero-feature-price").textContent = "Нет в наличии в каталоге";
       }
