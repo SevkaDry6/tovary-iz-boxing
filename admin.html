@@ -312,10 +312,19 @@
       card.appendChild(price);
 
       const status = document.createElement("p");
-      status.textContent = product.sold ? "🔴 Статус: ПРОДАНО" : "🟢 Статус: В НАЛИЧИИ";
+      status.textContent = product.sold ? "🔴 Статус: ПРОДАНО" : product.reserved ? "🟡 Статус: ЗАБРОНИРОВАНО" : "🟢 Статус: В НАЛИЧИИ";
       status.style.fontWeight = "bold";
-      status.style.color = product.sold ? "#ff8a8a" : "#9ee6a4";
+      status.style.color = product.sold ? "#ff8a8a" : product.reserved ? "#fbbf24" : "#9ee6a4";
       card.appendChild(status);
+
+      const reserveToggle = document.createElement("button");
+      reserveToggle.type = "button";
+      reserveToggle.textContent = product.reserved ? "↩️ Снять бронь" : "🟡 Забронировать товар";
+      reserveToggle.className = "secondary";
+      reserveToggle.disabled = !!product.sold;
+      reserveToggle.title = product.sold ? "Проданный товар нельзя забронировать" : "";
+      reserveToggle.addEventListener("click", () => setReservedStatus(product, !product.reserved, reserveToggle));
+      card.appendChild(reserveToggle);
 
       const soldToggle = document.createElement("button");
       soldToggle.type = "button";
@@ -348,6 +357,25 @@
 
       container.appendChild(card);
     });
+  }
+
+  async function setReservedStatus(product, reserved, button) {
+    button.disabled = true;
+    message(reserved ? "Ставлю бронь…" : "Снимаю бронь…");
+    try {
+      const { data, error } = await client.from(TABLE)
+        .update({ reserved })
+        .eq("id", product.id)
+        .select("id,reserved");
+      if (error) throw error;
+      if (!data || !data.length) throw new Error("Статус брони не изменён. Проверь права UPDATE в Supabase.");
+      product.reserved = reserved;
+      renderProducts();
+      message(reserved ? "Товар забронирован. На фото появится плашка «БРОНЬ»." : "Бронь снята.");
+    } catch (error) {
+      message("Не удалось изменить бронь: " + error.message, true);
+      button.disabled = false;
+    }
   }
 
   async function setSoldStatus(product, sold, button) {
