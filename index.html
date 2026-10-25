@@ -27,20 +27,6 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;opacity:0;animation:boxing-page-in .65s ease-out forwards}
-@keyframes boxing-page-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-@keyframes boxing-card-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes boxing-section-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-body :is(header,.hero,.buyer-notice,.catalog,.reviews-section,.bottom-banner,footer){animation:boxing-section-in .65s ease-out both}
-header{animation-delay:.04s!important}.hero{animation-delay:.08s!important}.buyer-notice{animation-delay:.12s!important}.catalog{animation-delay:.16s!important}.reviews-section{animation-delay:.2s!important}.bottom-banner{animation-delay:.24s!important}footer{animation-delay:.28s!important}
-button,a,input,textarea,select{transition:color .2s ease,background-color .2s ease,border-color .2s ease,box-shadow .2s ease}
-.product,.review-card{animation:boxing-card-in .45s ease-out both}
-@media(prefers-reduced-motion:reduce){body,body :is(header,.hero,.buyer-notice,.catalog,.reviews-section,.bottom-banner,footer),.product,.review-card{animation:none!important;opacity:1!important;transform:none!important}}
-/* Reveal elements smoothly as they enter the viewport */
-.scroll-reveal{opacity:0!important;transform:translateY(22px) scale(.99)!important;animation:none!important;transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.2,1)!important;will-change:opacity,transform}
-.scroll-reveal.is-visible{opacity:1!important;transform:translateY(0) scale(1)!important}
-@media(prefers-reduced-motion:reduce){.scroll-reveal{opacity:1!important;transform:none!important;transition:none!important;will-change:auto}}
-
 body{margin:0;background:radial-gradient(ellipse at 50% -20%,#14251e 0,transparent 42%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
 button,input{font:inherit}button,a{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:inherit;text-decoration:none}
 .container{width:min(var(--max),calc(100% - 40px));margin:auto}
@@ -782,44 +768,6 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   form.addEventListener("submit",e=>{e.preventDefault();send(input.value);input.value="";input.focus();});
   quick.addEventListener("click",e=>{const b=e.target.closest("button[data-chat-question]");if(b)send(b.dataset.chatQuestion);});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("is-open"))closeChat();});
-})();
-</script>
-
-<script>
-(() => {
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const selectors = ".catalog .section-head, .categories, .price-filters, .product, .reviews-section .section-head, .review-card, .bottom-banner";
-  if (reduceMotion || !("IntersectionObserver" in window)) {
-    document.querySelectorAll(selectors).forEach(el => el.classList.add("is-visible"));
-    return;
-  }
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("is-visible");
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.08, rootMargin: "0px 0px -35px 0px" });
-  function observeNewElements(root = document) {
-    root.querySelectorAll(selectors).forEach(el => {
-      if (el.classList.contains("scroll-reveal")) return;
-      el.classList.add("scroll-reveal");
-      observer.observe(el);
-    });
-  }
-  observeNewElements();
-  const mutationObserver = new MutationObserver(records => {
-    records.forEach(record => record.addedNodes.forEach(node => {
-      if (node.nodeType === 1) {
-        if (node.matches?.(selectors)) {
-          node.classList.add("scroll-reveal");
-          observer.observe(node);
-        }
-        observeNewElements(node);
-      }
-    }));
-  });
-  mutationObserver.observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 
