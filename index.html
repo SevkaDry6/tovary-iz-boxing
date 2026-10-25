@@ -122,6 +122,7 @@ h2{margin:8px 0 0;font-size:clamp(27px,4vw,39px);letter-spacing:-.04em}
 .product:hover .product-image img{transform:scale(1.045)}
 .no-photo{width:100%;height:100%;display:grid;place-items:center;color:#656b77;font-size:12px;letter-spacing:1px;text-transform:uppercase;background:radial-gradient(circle at 50% 40%,#272a31,#14161b 65%)}
 .tag{position:absolute;top:12px;left:12px;border:1px solid #34d39955;border-radius:7px;padding:7px 9px;background:#0b0c10d9;color:var(--gold2);font-size:9px;font-weight:800;letter-spacing:1px}
+.tag-reserved{top:52px;left:12px;border-color:#fbbf24;background:#fbbf24;color:#211600;font-size:12px;padding:9px 12px;box-shadow:0 4px 18px #0008;z-index:4}.product-reserved .product-image:after{content:"";position:absolute;inset:0;background:#fbbf240c;pointer-events:none}
 .product-info{padding:16px}
 .product-category{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
 .product h3{margin:9px 0 7px;font-size:16px;line-height:1.35}
@@ -424,6 +425,13 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
         tag.style.color = "#fff";
       }
       imageWrap.appendChild(tag);
+      if (product.reserved && !product.sold) {
+        const reservedTag = document.createElement("span");
+        reservedTag.className = "tag tag-reserved";
+        reservedTag.textContent = "БРОНЬ";
+        reservedTag.setAttribute("aria-label", "Товар забронирован");
+        imageWrap.appendChild(reservedTag);
+      }
 
       const info = document.createElement("div");
       info.className = "product-info";
@@ -659,7 +667,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
     try {
       const {data, error} = await client
         .from("store_products")
-        .select("id,name,price,category,description,size,image_url,active,sold,created_at")
+        .select("id,name,price,category,description,size,image_url,active,sold,reserved,created_at")
         .eq("active", true)
         .order("created_at", {ascending: false});
       if (error) throw error;
