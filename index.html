@@ -27,6 +27,15 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+body{margin:0;opacity:0;animation:boxing-page-in .65s ease-out forwards}
+@keyframes boxing-page-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes boxing-card-in{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes boxing-section-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+body :is(header,.hero,.buyer-notice,.catalog,.reviews-section,.bottom-banner,footer){animation:boxing-section-in .65s ease-out both}
+header{animation-delay:.04s!important}.hero{animation-delay:.08s!important}.buyer-notice{animation-delay:.12s!important}.catalog{animation-delay:.16s!important}.reviews-section{animation-delay:.2s!important}.bottom-banner{animation-delay:.24s!important}footer{animation-delay:.28s!important}
+button,a,input,textarea,select{transition:color .2s ease,background-color .2s ease,border-color .2s ease,box-shadow .2s ease}
+.product,.review-card{animation:boxing-card-in .45s ease-out both}
+@media(prefers-reduced-motion:reduce){body,body :is(header,.hero,.buyer-notice,.catalog,.reviews-section,.bottom-banner,footer),.product,.review-card{animation:none!important;opacity:1!important;transform:none!important}}
 body{margin:0;background:radial-gradient(ellipse at 50% -20%,#14251e 0,transparent 42%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
 button,input{font:inherit}button,a{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:inherit;text-decoration:none}
 .container{width:min(var(--max),calc(100% - 40px));margin:auto}
