@@ -311,8 +311,8 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
         sessionStorage.setItem("boxing_visitor_id", visitorId);
       }
       const { data, error } = await client.rpc("boxing_site_heartbeat", {
-        visitor_key: visitorId,
-        count_visit: countVisit
+        p_visitor_key: visitorId,
+        p_count_visit: countVisit
       });
       if (error) throw error;
       const stats = Array.isArray(data) ? data[0] : data;
