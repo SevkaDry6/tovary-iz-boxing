@@ -166,6 +166,14 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 .review-body{font-size:12px;line-height:1.75;color:#c2c6ce;overflow-wrap:anywhere;white-space:pre-wrap}
 @media(max-width:680px){.reviews-list{grid-template-columns:1fr}.review-card{padding:15px}}
 
+
+.traffic-bar{display:flex;justify-content:center;gap:10px;padding-top:12px;padding-bottom:4px;flex-wrap:wrap}
+.traffic-pill{display:flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid #34d39938;border-radius:999px;background:linear-gradient(110deg,#191a1f,#10231d);color:#aeb4bf;font-size:12px}
+.traffic-pill strong{color:#a7f3d0;font-size:13px;font-variant-numeric:tabular-nums}
+.traffic-icon{color:#a7f3d0;font-size:15px}
+.traffic-live{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 9px #34d399a0}
+@media(max-width:420px){.traffic-bar{gap:6px}.traffic-pill{gap:6px;padding:8px 10px;font-size:11px}}
+
 </style>
 </head>
 <body>
@@ -181,6 +189,11 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
     </nav>
   </div>
 </header>
+
+<div class="container traffic-bar" aria-label="Статистика сайта">
+  <div class="traffic-pill"><span class="traffic-icon">◉</span><span>Посетили сайт</span><strong id="site-visits">—</strong></div>
+  <div class="traffic-pill"><span class="traffic-live"></span><span>Сейчас онлайн</span><strong id="site-online">—</strong></div>
+</div>
 <main class="container">
   <section class="hero">
     <div class="hero-copy">
@@ -288,6 +301,32 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   let activeCategory = "Все";
 
   document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Site traffic counters: requires the Supabase SQL setup shared with the site owner.
+  async function updateTraffic(countVisit = false) {
+    try {
+      let visitorId = sessionStorage.getItem("boxing_visitor_id");
+      if (!visitorId) {
+        visitorId = crypto.randomUUID();
+        sessionStorage.setItem("boxing_visitor_id", visitorId);
+      }
+      const { data, error } = await client.rpc("boxing_site_heartbeat", {
+        visitor_key: visitorId,
+        count_visit: countVisit
+      });
+      if (error) throw error;
+      const stats = Array.isArray(data) ? data[0] : data;
+      if (stats) {
+        document.getElementById("site-visits").textContent = Number(stats.total_visits || 0).toLocaleString("ru-RU");
+        document.getElementById("site-online").textContent = Number(stats.online_now || 0).toLocaleString("ru-RU");
+      }
+    } catch (error) {
+      console.warn("Site traffic counters are not configured yet:", error.message);
+    }
+  }
+  updateTraffic(true);
+  window.setInterval(() => updateTraffic(false), 25000);
+
 
   function safeText(value) {
     return String(value ?? "");
