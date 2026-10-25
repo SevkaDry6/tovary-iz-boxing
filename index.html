@@ -39,6 +39,9 @@ header{position:sticky;top:0;z-index:20;background:#090a0de8;backdrop-filter:blu
 .nav-links a:hover{color:var(--gold2)}
 .nav-cta{border:1px solid #fb923c;border-radius:999px;padding:11px 16px;background:linear-gradient(135deg,#fb923c,#f97316);color:#17100a!important;font-weight:850;box-shadow:0 0 0 3px #fb923c20,0 5px 22px #f9731645}.nav-cta:hover{background:linear-gradient(135deg,#fdba74,#fb923c);box-shadow:0 0 0 4px #fb923c30,0 7px 26px #f9731660}
 
+
+.holiday-officer{display:none}
+@media(max-width:760px){.holiday-officer{display:block;width:min(100%,220px);margin:0 auto 8px;filter:drop-shadow(0 0 14px #d8b45a25)}.holiday-officer svg{display:block;width:100%;height:auto;max-height:145px}.holiday-emblem{display:none}}
 .holiday-card{position:relative;isolation:isolate;overflow:hidden;margin:12px 0 16px;padding:18px 20px;border:1px solid #34d39955;border-radius:18px;background:radial-gradient(ellipse at 50% 0%,#34d39920,transparent 70%),linear-gradient(135deg,#15191a,#102019);box-shadow:0 10px 28px #0004,inset 0 1px #ffffff0b;text-align:center;animation:desktopFrameGlow 5s ease-in-out infinite}
 .holiday-emblem{display:inline-grid;place-items:center;width:30px;height:30px;margin-bottom:7px;border:1px solid #34d39970;border-radius:50%;color:#a7f3d0;text-shadow:0 0 12px #34d39980}
 .holiday-kicker{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#a7f3d0;font-weight:750}
@@ -208,7 +211,20 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
       <div class="eyebrow hero-title-animated" aria-label="Место, где живут интересные находки"><span class="title-from-left">Место, где</span><span class="title-middle">живут интересные</span><span class="title-from-right">находки</span></div>
     </div>
     <aside class="holiday-card" aria-label="Поздравление с Днём таможенника Российской Федерации">
-      <div class="holiday-emblem" aria-hidden="true">✦</div>
+      <div class="holiday-officer" aria-hidden="true">
+<svg viewBox="0 0 220 150" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="uniform" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3d6556"/><stop offset="1" stop-color="#172f28"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe6a0"/><stop offset="1" stop-color="#b88b32"/></linearGradient></defs>
+<circle cx="110" cy="74" r="65" fill="#d8b45a" opacity=".08"/><circle cx="110" cy="74" r="55" fill="none" stroke="#d8b45a" stroke-opacity=".3" stroke-dasharray="3 6"/>
+<path d="M61 144 Q66 105 88 98 L132 98 Q154 105 159 144Z" fill="url(#uniform)" stroke="#d8b45a" stroke-opacity=".65"/>
+<path d="M88 99 L110 122 L132 99 L125 144 L95 144Z" fill="#e7e4d8"/><path d="M110 121 L119 131 L110 144 L101 131Z" fill="#b88b32"/>
+<rect x="88" y="76" width="44" height="30" rx="10" fill="#c98f6a"/><ellipse cx="110" cy="59" rx="28" ry="34" fill="#d9a17b"/>
+<path d="M82 54 Q77 20 109 22 Q142 20 138 54 L132 42 Q110 32 89 43Z" fill="#302a25"/>
+<path d="M73 43 L147 43 L139 29 L83 29Z" fill="#244b3d" stroke="#d8b45a" stroke-width="2"/><path d="M100 28 L110 17 L120 28Z" fill="#d8b45a"/><circle cx="110" cy="29" r="5" fill="#f3d57c"/>
+<path d="M97 64 Q102 68 107 64 M113 64 Q118 68 123 64" fill="none" stroke="#4b3028" stroke-width="2" stroke-linecap="round"/><path d="M104 79 Q110 83 116 79" fill="none" stroke="#7d4436" stroke-width="2" stroke-linecap="round"/>
+<path d="M90 103 L101 111 L95 120 L80 108Z M130 103 L119 111 L125 120 L140 108Z" fill="#d8b45a"/><circle cx="110" cy="109" r="7" fill="url(#gold)"/><path d="M110 103 L112 108 L117 109 L112 111 L110 116 L108 111 L103 109 L108 108Z" fill="#6d4c15"/>
+<path d="M48 134 Q110 151 172 134" fill="none" stroke="#d8b45a" stroke-opacity=".45" stroke-width="1.5"/>
+</svg></div>
+<div class="holiday-emblem" aria-hidden="true">✦</div>
       <div class="holiday-kicker">25 октября · праздник дня</div>
       <h2>С Днём таможенника РФ!</h2>
       <p>Желаем крепкого здоровья, спокойных смен, уверенности в каждом решении и успехов в важной службе.</p>
