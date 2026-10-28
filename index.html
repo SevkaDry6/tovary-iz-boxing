@@ -778,7 +778,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 #boxing-game-panel .bg-stats{display:flex;justify-content:space-between;gap:8px;margin-bottom:12px}
 #boxing-game-panel .bg-stat{flex:1;padding:9px;border:1px solid #ffffff12;border-radius:11px;background:#ffffff05;text-align:center;font-size:11px;color:#aeb5bf}
 #boxing-game-panel .bg-stat b{display:block;color:#a7f3d0;font-size:19px;margin-top:3px}
-#boxing-game-hit{touch-action:manipulation;user-select:none;-webkit-user-select:none;width:100%;min-height:105px;border:1px solid #34d39950;border-radius:15px;background:linear-gradient(145deg,#14251d,#101713);color:#fff;font-size:43px;transition:transform .08s,background .2s}
+#boxing-game-hit{display:block;position:relative;flex:none;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;scroll-margin:0;width:100%;min-height:105px;border:1px solid #34d39950;border-radius:15px;background:linear-gradient(145deg,#14251d,#101713);color:#fff;font-size:43px;transition:background .2s}
 #boxing-game-hit:active{transform:scale(.97)}
 #boxing-game-hit:disabled{opacity:.65;cursor:default}
 #boxing-game-start{display:block;position:relative;width:100%;margin:0 0 10px;padding:11px;border:0;border-radius:11px;background:linear-gradient(135deg,#a7f3d0,#34d399);color:#092017;font-weight:850}
@@ -833,7 +833,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   launch.addEventListener('click',()=>panel.classList.contains('open')?closeGame():openGame());
   close.addEventListener('click',closeGame);
   start.addEventListener('click',begin);
-  hit.addEventListener('click',()=>{if(!running)return;score++;scoreEl.textContent=String(score)});
+  hit.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(!running)return;score++;scoreEl.textContent=String(score)});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open'))closeGame()});
 })();
 </script>
