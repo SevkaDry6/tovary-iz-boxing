@@ -793,7 +793,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 <section id="boxing-game-panel" role="dialog" aria-modal="false" aria-labelledby="boxing-game-title">
   <div class="bg-head"><div class="bg-title" id="boxing-game-title">🥊 Boxing Clicker</div><button id="boxing-game-close" type="button" aria-label="Закрыть игру">×</button></div>
   <p class="bg-help">Жми на перчатку как можно быстрее за 20 секунд. Чем больше очков, тем выше скидка: 200 очков дают 13%. Максимальная скидка — 13%.</p>
-  <div class="bg-stats"><div class="bg-stat">Очки<b id="boxing-game-score">0</b></div><div class="bg-stat">Время<b id="boxing-game-time">10</b></div><div class="bg-stat">Рекорд<b id="boxing-game-best">0</b></div></div>
+  <div class="bg-stats"><div class="bg-stat">Очки<b id="boxing-game-score">0</b></div><div class="bg-stat">Время<b id="boxing-game-time">20</b></div><div class="bg-stat">Рекорд<b id="boxing-game-best">0</b></div></div>
   <button id="boxing-game-start" type="button">Начать игру</button>
   <button id="boxing-game-hit" type="button" disabled aria-label="Нажимай на перчатку">🥊</button>
   <div id="boxing-game-result" aria-live="polite"></div>
@@ -810,7 +810,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   const timeEl=document.getElementById('boxing-game-time');
   const bestEl=document.getElementById('boxing-game-best');
   const result=document.getElementById('boxing-game-result');
-  let score=0,time=10,timer=null,running=false;
+  let score=0,time=20,timer=null,running=false;
   const readBest=()=>{try{return Math.max(0,Number(localStorage.getItem('boxingClickerBest')||0))}catch(_){return 0}};
   let best=readBest();bestEl.textContent=best;
   function openGame(){panel.classList.add('open');launch.setAttribute('aria-expanded','true')}
