@@ -792,7 +792,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 <button id="boxing-game-launch" type="button" aria-controls="boxing-game-panel" aria-expanded="false">🎮 Поймать скидку</button>
 <section id="boxing-game-panel" role="dialog" aria-modal="false" aria-labelledby="boxing-game-title">
   <div class="bg-head"><div class="bg-title" id="boxing-game-title">🥊 Boxing Clicker</div><button id="boxing-game-close" type="button" aria-label="Закрыть игру">×</button></div>
-  <p class="bg-help">Жми на перчатку как можно быстрее за 20 секунд. Чем больше очков, тем выше скидка: 200 очков дают 13%. Максимальная скидка — 13%.</p>
+  <p class="bg-help">Жми на перчатку как можно быстрее за 20 секунд и получи скидку! Максимальная скидка — 13%.</p>
   <div class="bg-stats"><div class="bg-stat">Очки<b id="boxing-game-score">0</b></div><div class="bg-stat">Время<b id="boxing-game-time">20</b></div><div class="bg-stat">Рекорд<b id="boxing-game-best">0</b></div></div>
   <button id="boxing-game-start" type="button">Начать игру</button>
   <button id="boxing-game-hit" type="button" disabled aria-label="Нажимай на перчатку">🥊</button>
@@ -826,7 +826,7 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
     if(discount>0){
       result.innerHTML='Твой результат: <strong>'+discount+'% скидки</strong><br>Код: <strong>'+code+'</strong><br>Напиши продавцу в MAX и покажи этот код.';
     }else{
-      result.innerHTML='Ты набрал '+score+' очков. Пока скидка 0%. Для первой скидки нужно набрать хотя бы 16 очков, а 200 очков дают 13%. Попробуй ещё раз.';
+      result.innerHTML='Ты набрал '+score+' очков. В этот раз скидка не выпала. Попробуй ещё раз!';
     }
     result.classList.add('show');
   }
