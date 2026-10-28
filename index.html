@@ -792,8 +792,8 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
 <button id="boxing-game-launch" type="button" aria-controls="boxing-game-panel" aria-expanded="false">🎮 Поймать скидку</button>
 <section id="boxing-game-panel" role="dialog" aria-modal="false" aria-labelledby="boxing-game-title">
   <div class="bg-head"><div class="bg-title" id="boxing-game-title">🥊 Boxing Clicker</div><button id="boxing-game-close" type="button" aria-label="Закрыть игру">×</button></div>
-  <p class="bg-help">Жми на перчатку 30 секунд. Чем больше очков, тем выше скидка: 200 очков дают 13%. Максимальная скидка — 13%.</p>
-  <div class="bg-stats"><div class="bg-stat">Очки<b id="boxing-game-score">0</b></div><div class="bg-stat">Время<b id="boxing-game-time">30</b></div><div class="bg-stat">Рекорд<b id="boxing-game-best">0</b></div></div>
+  <p class="bg-help">Жми на перчатку как можно быстрее за 10 секунд. Чем больше очков, тем выше скидка: 200 очков дают 13%. Максимальная скидка — 13%.</p>
+  <div class="bg-stats"><div class="bg-stat">Очки<b id="boxing-game-score">0</b></div><div class="bg-stat">Время<b id="boxing-game-time">10</b></div><div class="bg-stat">Рекорд<b id="boxing-game-best">0</b></div></div>
   <button id="boxing-game-hit" type="button" disabled aria-label="Нажимай на перчатку">🥊</button>
   <button id="boxing-game-start" type="button">Начать игру</button>
   <div id="boxing-game-result" aria-live="polite"></div>
@@ -810,13 +810,13 @@ footer{border-top:1px solid #ffffff12;padding:25px 0 32px;color:#7e8490;font-siz
   const timeEl=document.getElementById('boxing-game-time');
   const bestEl=document.getElementById('boxing-game-best');
   const result=document.getElementById('boxing-game-result');
-  let score=0,time=30,timer=null,running=false;
+  let score=0,time=10,timer=null,running=false;
   const readBest=()=>{try{return Math.max(0,Number(localStorage.getItem('boxingClickerBest')||0))}catch(_){return 0}};
   let best=readBest();bestEl.textContent=best;
   function openGame(){panel.classList.add('open');launch.setAttribute('aria-expanded','true')}
   function closeGame(){panel.classList.remove('open');launch.setAttribute('aria-expanded','false');stopGame()}
   function stopGame(){if(timer){clearInterval(timer);timer=null}running=false;hit.disabled=true}
-  function begin(){stopGame();score=0;time=30;scoreEl.textContent='0';timeEl.textContent='30';result.classList.remove('show');result.textContent='';hit.disabled=false;start.textContent='Игра идёт…';start.disabled=true;running=true;hit.focus();timer=setInterval(()=>{time--;timeEl.textContent=String(time);if(time<=0)finish()},1000)}
+  function begin(){stopGame();score=0;time=10;scoreEl.textContent='0';timeEl.textContent='10';result.classList.remove('show');result.textContent='';hit.disabled=false;start.textContent='Игра идёт…';start.disabled=true;running=true;hit.focus();timer=setInterval(()=>{time--;timeEl.textContent=String(time);if(time<=0)finish()},1000)}
   function finish(){
     if(!running)return;stopGame();start.disabled=false;start.textContent='Играть ещё раз';
     if(score>best){best=score;bestEl.textContent=best;try{localStorage.setItem('boxingClickerBest',String(best))}catch(_){}}
